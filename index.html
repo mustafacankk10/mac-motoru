@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Süper Lig RP - Yapay Zeka Analiz Motoru V5.2</title>
+    <style>
+        :root {
+            --bg-color: #0d1117; --card-bg: #161b22; --border-color: #30363d;
+            --accent-green: #2ea043; --accent-green-hover: #3fb950;
+            --accent-yellow: #d29922; --accent-red: #da3633; --accent-blue: #58a6ff;
+            --text-main: #c9d1d9; --text-muted: #8b949e;
+        }
+
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 2rem; display: flex; flex-direction: column; align-items: center; }
+        
+        .header { text-align: center; margin-bottom: 2rem; }
+        .header h1 { font-size: 2rem; margin: 0 0 0.5rem 0; letter-spacing: 1px; }
+        .header h1 span.green { color: var(--accent-green); }
+        .badge { background-color: var(--accent-green); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; vertical-align: middle; margin-left: 10px; }
+
+        .power-selector { background: var(--card-bg); border: 1px solid var(--accent-blue); border-radius: 8px; padding: 1rem 2rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 15px; box-shadow: 0 0 10px rgba(88, 166, 255, 0.1); }
+        .power-selector label { font-weight: bold; color: var(--accent-blue); }
+        .power-selector select { background: #0d1117; color: white; border: 1px solid var(--border-color); padding: 8px 15px; border-radius: 4px; font-size: 1rem; outline: none; cursor: pointer; }
+
+        .simulation-container { display: flex; gap: 1.5rem; width: 100%; max-width: 1000px; }
+        .team-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; flex: 1; }
+        .team-header { display: flex; flex-direction: column; gap: 5px; margin-bottom: 1rem; }
+        .team-input { background: transparent; border: none; border-bottom: 1px solid var(--border-color); color: var(--text-main); font-size: 1.2rem; font-weight: bold; outline: none; width: 100%; padding: 5px 0; text-align: center; }
+        
+        .upload-section { border: 1px dashed var(--border-color); border-radius: 6px; padding: 1rem; text-align: center; margin-bottom: 1rem; cursor: pointer; position: relative; transition: 0.2s; }
+        .upload-section:hover { border-color: var(--accent-green); }
+        .upload-section input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .upload-title { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 5px; display: block; text-align: left; }
+        .upload-text { font-size: 0.85rem; color: var(--text-main); margin-top: 5px; }
+        .upload-sub { font-size: 0.7rem; color: var(--text-muted); }
+
+        .vs-divider { font-size: 1.5rem; font-weight: bold; color: var(--border-color); display: flex; align-items: center; }
+
+        .action-container { margin-top: 2rem; text-align: center; }
+        .btn-start { background-color: var(--accent-green); color: #ffffff; border: none; border-radius: 6px; padding: 12px 32px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-start:hover { background-color: var(--accent-green-hover); }
+
+        .match-report { margin-top: 2rem; background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; width: 100%; max-width: 900px; padding: 2rem; display: none; box-sizing: border-box; }
+        .match-report.active { display: block; }
+        
+        .report-header { text-align: center; font-size: 1.8rem; font-weight: bold; margin-bottom: 5px; padding-bottom: 10px; }
+        .report-league { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;}
+
+        /* Kopyalama Butonları ve Başlıklar */
+        .section-box { margin-bottom: 2rem; border: 1px solid var(--border-color); border-radius: 8px; background: #0d1117; overflow: hidden; }
+        .section-top { display: flex; justify-content: space-between; align-items: center; background: #161b22; padding: 10px 15px; border-bottom: 1px solid var(--border-color); }
+        .section-title { font-weight: bold; font-size: 1rem; color: var(--text-main); margin: 0; }
+        .btn-copy { background: #21262d; border: 1px solid var(--border-color); color: var(--text-muted); padding: 5px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; font-weight: bold;}
+        .btn-copy:hover { color: var(--text-main); border-color: var(--text-muted); }
+        
+        .section-content { padding: 15px; }
+
+        .event-item { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #21262d; }
+        .event-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+        .event-title { font-weight: bold; color: var(--text-main); margin-bottom: 4px; font-size: 0.95rem; }
+        .event-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; }
+        
+        .card-yellow { color: var(--accent-yellow); font-weight: bold; }
+        .card-red { color: var(--accent-red); font-weight: bold; }
+        .goal-text { color: var(--accent-green); font-weight: bold; }
+
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dashed #21262d; padding-bottom: 5px; font-size: 0.95rem; }
+        .stat-team-names { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 15px; color: var(--text-muted); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+
+        .ai-analysis-text { font-size: 0.95rem; line-height: 1.5; color: var(--text-main); }
+        .motm { text-align: center; font-size: 1.1rem; font-weight: bold; color: var(--accent-yellow); padding: 10px; background: #21262d; border-radius: 6px; border: 1px solid var(--border-color); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>ANALİZ <span>MOTORU</span> <span class="badge">V5.2 FİNAL</span></h1>
+        <p>Satır Algılama Düzeltmesi, Kırmızı Kart Disiplini ve Kopyalama Araçları</p>
+    </div>
+
+    <div class="power-selector">
+        <label>⚡ Maç Öncesi Kadro Kalitesi:</label>
+        <select id="squadAdvantage">
+            <option value="t1">Ev Sahibi Kadro Olarak Üstün</option>
+            <option value="equal" selected>İki Takım Kadro Olarak Denk</option>
+            <option value="t2">Deplasman Kadro Olarak Üstün</option>
+        </select>
+    </div>
+
+    <div class="simulation-container">
+        <!-- Ev Sahibi -->
+        <div class="team-card">
+            <div class="team-header">
+                <input type="text" id="t1Name" class="team-input" placeholder="Ev Sahibi Takım" required>
+            </div>
+            <span class="upload-title">TAKTİK DOSYASI (.TXT)</span>
+            <div class="upload-section">
+                <input type="file" accept=".txt" onchange="processTacticFile(this, 1, 't1-tac')">
+                <div class="upload-text" id="t1-tac">📄 Taktik Metni Yükle</div>
+            </div>
+
+            <span class="upload-title">KADRO DOSYASI (.TXT)</span>
+            <div class="upload-section">
+                <input type="file" accept=".txt" onchange="processRosterFile(this, 1, 't1-ros')">
+                <div class="upload-text" id="t1-ros">📝 Kadro Yükle</div>
+                <div class="upload-sub">İsim | Mevki (Alt alta)</div>
+            </div>
+        </div>
+
+        <div class="vs-divider">VS</div>
+
+        <!-- Deplasman -->
+        <div class="team-card">
+            <div class="team-header">
+                <input type="text" id="t2Name" class="team-input" placeholder="Deplasman Takım" required>
+            </div>
+            <span class="upload-title">TAKTİK DOSYASI (.TXT)</span>
+            <div class="upload-section">
+                <input type="file" accept=".txt" onchange="processTacticFile(this, 2, 't2-tac')">
+                <div class="upload-text" id="t2-tac">📄 Taktik Metni Yükle</div>
+            </div>
+
+            <span class="upload-title">KADRO DOSYASI (.TXT)</span>
+            <div class="upload-section">
+                <input type="file" accept=".txt" onchange="processRosterFile(this, 2, 't2-ros')">
+                <div class="upload-text" id="t2-ros">📝 Kadro Yükle</div>
+                <div class="upload-sub">İsim - Mevki (Alt alta)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-container">
+        <button class="btn-start" id="startBtn" onclick="simulateMatch()">▷ MAÇI SİMÜLE ET</button>
+    </div>
+
+    <div class="match-report" id="matchReport">
+        <div class="report-header" id="repTitle">Takım 1  0-0  Takım 2</div>
+        <div class="report-league">/ Süper Lig Simülasyonu</div>
+
+        <!-- Analiz Kutusu -->
+        <div class="section-box">
+            <div class="section-top">
+                <h3 class="section-title">🧠 Taktiksel Çarpışma Analizi</h3>
+                <button class="btn-copy" onclick="copyContent('aiAnalysisText', this)">📋 Kopyala</button>
+            </div>
+            <div class="section-content ai-analysis-text" id="aiAnalysisText">Analiz ediliyor...</div>
+        </div>
+
+        <!-- Maç Günlüğü Kutusu -->
+        <div class="section-box">
+            <div class="section-top">
+                <h3 class="section-title">⏱️ Maç Günlüğü</h3>
+                <button class="btn-copy" onclick="copyContent('eventLog', this)">📋 Kopyala</button>
+            </div>
+            <div class="section-content" id="eventLog"></div>
+        </div>
+
+        <!-- İstatistik Kutusu -->
+        <div class="section-box">
+            <div class="section-top">
+                <h3 class="section-title">📊 İstatistikler</h3>
+                <button class="btn-copy" onclick="copyContent('statsContent', this)">📋 Kopyala</button>
+            </div>
+            <div class="section-content" id="statsContent">
+                <div class="stat-team-names">
+                    <span id="stName1">Ev Sahibi</span>
+                    <span id="stName2">Deplasman</span>
+                </div>
+                <div class="stat-row"><span id="stPos1">%50</span> <span>Topla Oynama</span> <span id="stPos2">%50</span></div>
+                <div class="stat-row"><span id="stShot1">0</span> <span>Toplam Şut</span> <span id="stShot2">0</span></div>
+                <div class="stat-row"><span id="stShotT1">0</span> <span>İsabetli Şut</span> <span id="stShotT2">0</span></div>
+                <div class="stat-row"><span id="stPass1">0</span> <span>İsabetli Pas</span> <span id="stPass2">0</span></div>
+                <div class="stat-row"><span id="stCards1">0 Sarı / 0 Krz</span> <span>Kartlar</span> <span id="stCards2">0 Sarı / 0 Krz</span></div>
+            </div>
+        </div>
+
+        <div class="motm" id="motmBox"></div>
+    </div>
+
+    <script>
+        let rosterT1 = [];
+        let rosterT2 = [];
+        let tacticLen1 = 0; 
+        let tacticLen2 = 0;
+
+        // KOPYALAMA FONKSİYONU
+        function copyContent(elementId, btn) {
+            const el = document.getElementById(elementId);
+            // Kopyalarken HTML etiketlerini değil, dümdüz metni (innerText) alır
+            const textToCopy = el.innerText; 
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = btn.innerText;
+                btn.innerText = "✅ Kopyalandı!";
+                setTimeout(() => { btn.innerText = originalText; }, 2000);
+            }).catch(err => {
+                alert("Kopyalama başarısız oldu: " + err);
+            });
+        }
+
+        function updateUIText(input, textId) {
+            const txt = document.getElementById(textId);
+            if(input.files.length > 0) {
+                txt.innerText = input.files[0].name;
+                txt.style.color = "var(--accent-green)";
+            }
+        }
+
+        function processTacticFile(input, teamNum, textId) {
+            if(input.files.length === 0) return;
+            const file = input.files[0];
+            if (!file.name.toLowerCase().endsWith('.txt')) { alert("HATA: Sadece .txt belgesi yükleyin."); input.value = ""; return; }
+
+            updateUIText(input, textId);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result.trim();
+                if(teamNum === 1) tacticLen1 = content.length;
+                if(teamNum === 2) tacticLen2 = content.length;
+            };
+            reader.readAsText(file, "UTF-8");
+        }
+
+        function processRosterFile(input, teamNum, textId) {
+            if(input.files.length === 0) return;
+            const file = input.files[0];
+            if (!file.name.toLowerCase().endsWith('.txt')) { alert("HATA: Sadece .txt belgesi yükleyin."); input.value = ""; return; }
+
+            updateUIText(input, textId);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                let parsedRoster = [];
+                
+                // SATIR OKUMA HATASI DÜZELTİLDİ: Artık Windows, Mac ve kopyala/yapıştır formatlarını hatasız ayırır.
+                const lines = content.split(/\r?\n/);
+                
+                lines.forEach(line => {
+                    if(line.trim().length < 2) return;
+                    const parts = line.split(/[-;,\/|]/);
+                    
+                    let cleanName = parts[0].trim();
+                    if(cleanName.length < 2) return; 
+
+                    const pos = parts.length > 1 ? parts[1].trim().toLocaleUpperCase('tr-TR') : 'OS';
+                    parsedRoster.push({ name: cleanName, pos: pos });
+                });
+
+                if (parsedRoster.length === 0) { alert("Sistem dosyadan temiz isim çıkaramadı!"); return; }
+                
+                if(teamNum === 1) rosterT1 = parsedRoster;
+                if(teamNum === 2) rosterT2 = parsedRoster;
+            };
+            reader.readAsText(file, "UTF-8");
+        }
+
+        function rng(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+        // DİNAMİK VE GÜVENLİ OYUNCU ÇEKME SİSTEMİ (Kırmızı kart görenler filtrelenir)
+        function getPlayerByRole(teamNum, roleType, redCardedNamesList) {
+            const roster = teamNum === 1 ? rosterT1 : rosterT2;
+            const prefix = teamNum === 1 ? "Ev Sahibi" : "Deplasman";
+            
+            // Kırmızı kart yiyen oyuncuları havuzdan tamamen çıkar
+            let activeRoster = roster.filter(p => !redCardedNamesList.includes(p.name));
+            
+            if(activeRoster.length === 0) return { name: `${prefix} Oyuncusu (Yedek)`, pos: 'UN' };
+
+            let filtered = [];
+            if(roleType === 'scorer') {
+                filtered = activeRoster.filter(p => ['ST','FW','RW','LW','CAM','RM','LM','SNT','SF','FOR','FORVET','SĞA','SGA','SLA','OOS','KANAT','SAĞAÇIK','SOLAÇIK'].includes(p.pos));
+            } else if (roleType === 'assist') {
+                filtered = activeRoster.filter(p => ['CAM','CM','RM','LM','RW','LW','RB','LB','OOS','OS','DOS','SĞO','SGO','SLO','SĞB','SGB','SLB','BEK','SAĞBEK','SOLBEK','KANAT'].includes(p.pos));
+            } else if (roleType === 'card') {
+                filtered = activeRoster.filter(p => ['CB','RB','LB','CDM','CM','STP','STOPER','SĞB','SGB','SLB','BEK','DOS','OS','DEF','DEFANS','SAĞBEK','SOLBEK'].includes(p.pos));
+            }
+
+            if(filtered.length === 0) {
+                filtered = activeRoster.filter(p => !['GK', 'KL', 'KALECİ', 'KALECI'].includes(p.pos));
+                if(filtered.length === 0) filtered = activeRoster; 
+            }
+            return filtered[rng(0, filtered.length - 1)];
+        }
+
+        const goalScenarios = [
+            "{assist}’in kullandığı kornerde ceza sahası içinde topa iyi yükselen {scorer}, düzgün bir kafa vuruşuyla ağları havalandırdı.",
+            "{assist} sol kanattan hızla içeri kat edip savunmanın arkasına nefis bir pas bıraktı. {scorer} kaleciyle karşı karşıya pozisyonda hata yapmadı.",
+            "Organize gelişen atakta {assist} sağ kanattan kesti, arka direkte topla buluşan {scorer} sert bir vuruşla golü kaydetti.",
+            "Merkezden gelişen atakta {assist} aradan harika gördü, ceza sahasına giren {scorer} tek vuruşla kaleciyi avladı."
+        ];
+
+        function simulateMatch() {
+            const t1 = document.getElementById('t1Name').value || "Ev Sahibi";
+            const t2 = document.getElementById('t2Name').value || "Deplasman";
+            const squadAdv = document.getElementById('squadAdvantage').value;
+            const report = document.getElementById('matchReport');
+            
+            let events = [];
+            
+            // KART LİSTELERİ
+            let yellowCardsT1 = []; let yellowCardsT2 = [];
+            let redCardedNames1 = []; let redCardedNames2 = [];
+
+            // 1. ÖNCE KARTLARI DAĞIT Kİ OYUNCULAR SAHADAN ATILSIN
+            const totalYellows = rng(2, 6);
+            for(let i=0; i<totalYellows; i++) {
+                const teamNum = rng(1, 2);
+                
+                // Bir takım maksimum 3 kırmızı kart görebilir (Maç tatil olmasın diye kısıtlama)
+                if (teamNum === 1 && redCardedNames1.length >= 3) continue;
+                if (teamNum === 2 && redCardedNames2.length >= 3) continue;
+
+                const tName = teamNum === 1 ? t1 : t2;
+                const redList = teamNum === 1 ? redCardedNames1 : redCardedNames2;
+                const yellowList = teamNum === 1 ? yellowCardsT1 : yellowCardsT2;
+                
+                // Sadece SAHADA OLAN (kırmızı kart görmemiş) oyunculardan seç
+                const playerObj = getPlayerByRole(teamNum, 'card', redList);
+                const player = playerObj.name;
+                
+                let minute = rng(5, 85);
+
+                if(yellowList.includes(player)) {
+                    events.push({
+                        minute: minute,
+                        html: `<div class="event-title">${minute}' <span class="card-red">Kırmızı Kart! (İkinci Sarı)</span> ${player}</div>
+                               <div class="event-desc">Daha önce sarı kartı bulunan ${player}, sert faulü sonrası hakem tarafından ikinci sarı ve ardından kırmızı kartla oyundan atıldı. ${tName} sahada eksik!</div>`
+                    });
+                    redList.push(player); // Artık bu oyuncu kırmızı kartlılar listesinde
+                } else {
+                    yellowList.push(player);
+                    events.push({
+                        minute: minute,
+                        html: `<div class="event-title">${minute}' <span class="card-yellow">Sarı Kart</span> ${player}</div>
+                               <div class="event-desc">Taktiksel faul sonrası hakem elini cebine götürdü. ${tName} takımında ${player} sarı kart gören isim.</div>`
+                    });
+                }
+            }
+
+            // Direkt Kırmızı Kart İhtimali (%8)
+            if(rng(1, 100) <= 8) {
+                const teamNum = rng(1, 2);
+                const tName = teamNum === 1 ? t1 : t2;
+                const redList = teamNum === 1 ? redCardedNames1 : redCardedNames2;
+                
+                if (redList.length < 3) {
+                    const playerObj = getPlayerByRole(teamNum, 'card', redList);
+                    let minute = rng(10, 80);
+                    events.push({
+                        minute: minute,
+                        html: `<div class="event-title">${minute}' <span class="card-red">DİREKT KIRMIZI KART!</span> ${playerObj.name}</div>
+                               <div class="event-desc">Saha karıştı! VAR incelemesi sonrasında ${playerObj.name}'ın kontrolsüz müdahalesi tespit edildi. Hakem doğrudan kırmızı kartını çıkardı, ${tName} cephesi şokta!</div>`
+                    });
+                    redList.push(playerObj.name);
+                }
+            }
+
+            // 2. KADRO VE TAKTİK ÇARPIŞMASI
+            let baseT1WinChance = 50;
+            if(squadAdv === 't1') baseT1WinChance += 20; 
+            if(squadAdv === 't2') baseT1WinChance -= 20;
+
+            let tacticDiff = tacticLen1 - tacticLen2;
+            let tacticBonus = Math.min(Math.max(Math.round(tacticDiff / 50), -30), 30);
+            baseT1WinChance += tacticBonus;
+
+            // 3. KIRMIZI KARTLARIN MAÇA VE SKORA ETKİSİ
+            let matchCommentCard = "";
+            if (redCardedNames1.length > 0) {
+                baseT1WinChance -= (redCardedNames1.length * 25);
+                matchCommentCard = `\n\n⚠️ ${t1} takımının gördüğü kırmızı kart(lar), oyun planlarını altüst etti ve dirençlerini kırdı.`;
+            }
+            if (redCardedNames2.length > 0) {
+                baseT1WinChance += (redCardedNames2.length * 25);
+                matchCommentCard = `\n\n⚠️ ${t2} cephesinde yaşanan kırmızı kart şoku, ibrenin tamamen rakibe dönmesine sebep oldu.`;
+            }
+
+            if(baseT1WinChance > 95) baseT1WinChance = 95;
+            if(baseT1WinChance < 5) baseT1WinChance = 5;
+
+            // 4. GOLLERİ BELİRLE
+            let score1 = 0; let score2 = 0;
+            for(let i=0; i<6; i++) { if(rng(1,100) <= (baseT1WinChance/1.5)) score1++; }
+            for(let i=0; i<6; i++) { if(rng(1,100) <= ((100-baseT1WinChance)/1.5)) score2++; }
+
+            // 9 Kişi veya 8 kişi kalan takım çok nadir gol atabilir
+            if (redCardedNames1.length >= 2) score1 = Math.min(score1, rng(0,1));
+            if (redCardedNames2.length >= 2) score2 = Math.min(score2, rng(0,1));
+
+            let allScorers = [];
+            for(let i=0; i<score1; i++) addGoal(events, t1, 1, allScorers, redCardedNames1);
+            for(let i=0; i<score2; i++) addGoal(events, t2, 2, allScorers, redCardedNames2);
+
+            // KRONOLOJİK SIRALAMA (Artık Kusursuz Çalışır)
+            events.sort((a,b) => a.minute - b.minute);
+
+            let eventHtml = '';
+            events.forEach(e => { eventHtml += `<div class="event-item">${e.html}</div>`; });
+            if(events.length === 0) eventHtml = `<div class="event-item"><div class="event-title">0' Maçta Kayda Değer Olay Olmadı</div><div class="event-desc">Orta saha mücadelesi şeklinde geçen maçta takımlar riske girmedi.</div></div>`;
+
+            // YAPAY ZEKA METNİ
+            let aiAnalysis = `Kadro Durumu: Maç öncesi değerlendirmelere göre ${squadAdv === 't1' ? t1 + ' kadro kalitesi olarak kağıt üstünde daha güçlüydü.' : (squadAdv === 't2' ? t2 + ' kağıt üstünde daha ağır basan bir kadroya sahipti.' : 'iki takımın kadro kaliteleri birbirine denk görülüyordu.')}\n\n`;
+            aiAnalysis += `Taktiksel Çarpışma: Taktik tahtasında ${t1} menajeri ${tacticLen1} karakterlik bir oyun planı çizerken, ${t2} cephesinde ${tacticLen2} karakterlik bir strateji okuduk. `;
+
+            if (Math.abs(tacticBonus) < 5) {
+                aiAnalysis += `İki menajer de sahaya benzer detayda planlar yansıttı.`;
+            } else if (tacticBonus >= 5) {
+                if (squadAdv === 't1') aiAnalysis += `Ev sahibi ekip üstün kadrosunu detaylı taktikle birleştirerek rakibini boğdu.`;
+                else if (squadAdv === 't2') aiAnalysis += `${t1} menajerinin inanılmaz detaylı taktiği, rakibin kadro kalitesini adeta iptal etti!`;
+                else aiAnalysis += `Denk kadrolarda ${t1}'in taktiksel emeği sahada fark yarattı.`;
+            } else {
+                if (squadAdv === 't2') aiAnalysis += `Deplasman ekibi kalitesini taktikle harmanlayıp işi bitirdi.`;
+                else if (squadAdv === 't1') aiAnalysis += `${t2} menajerinin kusursuz taktiği, favori gösterilen ev sahibini çaresiz bıraktı!`;
+                else aiAnalysis += `Denk kadrolarda ${t2}'nin taktiksel derinliği maçı onlara getirdi.`;
+            }
+            
+            aiAnalysis += matchCommentCard;
+
+            // Yapay zeka metni için boşlukları <br> etiketine çevirerek HTML'e basıyoruz
+            document.getElementById('aiAnalysisText').innerHTML = aiAnalysis.replace(/\n/g, '<br>');
+
+            // İSTATİSTİKLER
+            const pos1 = Math.round(baseT1WinChance + rng(-10, 10));
+            const pos2 = 100 - pos1;
+            const shots1 = score1 + rng(4, 10) + (baseT1WinChance > 50 ? 3 : 0); 
+            const shots2 = score2 + rng(4, 10) + (baseT1WinChance <= 50 ? 3 : 0);
+            const shotT1 = score1 + rng(1, 4); const shotT2 = score2 + rng(1, 4);
+            const passSucc1 = Math.round(rng(300, 500) * (rng(75, 89)/100));
+            const passSucc2 = Math.round(rng(300, 500) * (rng(75, 89)/100));
+
+            // EKRANA YAZDIRMA
+            document.getElementById('repTitle').innerText = `${t1}   ${score1} - ${score2}   ${t2}`;
+            document.getElementById('eventLog').innerHTML = eventHtml;
+
+            document.getElementById('stName1').innerText = t1; document.getElementById('stName2').innerText = t2;
+            document.getElementById('stPos1').innerText = `%${pos1}`; document.getElementById('stPos2').innerText = `%${pos2}`;
+            document.getElementById('stShot1').innerText = shots1; document.getElementById('stShot2').innerText = shots2;
+            document.getElementById('stShotT1').innerText = shotT1; document.getElementById('stShotT2').innerText = shotT2;
+            document.getElementById('stPass1').innerText = passSucc1; document.getElementById('stPass2').innerText = passSucc2;
+            
+            document.getElementById('stCards1').innerText = `${yellowCardsT1.length} Sarı / ${redCardedNames1.length} Kırmızı`;
+            document.getElementById('stCards2').innerText = `${yellowCardsT2.length} Sarı / ${redCardedNames2.length} Kırmızı`;
+
+            let motmName = allScorers.length > 0 ? allScorers[rng(0, allScorers.length-1)] : getPlayerByRole(rng(1,2), 'scorer', []).name;
+            document.getElementById('motmBox').innerText = `💫 Maçın Adamı: ${motmName} (${(rng(80, 98) / 10).toFixed(1)})`;
+
+            report.classList.add('active');
+        }
+
+        function addGoal(eventsArray, teamName, teamNum, scorersArray, redList) {
+            let minute = rng(5, 90);
+            
+            // Golü atan ve asisti yapan kişi kırmızı kart görmemiş (sahada olan) oyunculardan seçilir
+            let p1Obj = getPlayerByRole(teamNum, 'scorer', redList);
+            let p2Obj = getPlayerByRole(teamNum, 'assist', redList);
+            
+            let attempts = 0;
+            while(p1Obj.name === p2Obj.name && attempts < 10) { p2Obj = getPlayerByRole(teamNum, 'assist', redList); attempts++; }
+            
+            let scenario = goalScenarios[rng(0, goalScenarios.length-1)];
+            let description = scenario.replace('{scorer}', p1Obj.name).replace('{assist}', p2Obj.name);
+            
+            scorersArray.push(p1Obj.name);
+            eventsArray.push({
+                minute: minute,
+                html: `<div class="event-title">${minute}' <span class="goal-text">Gol!</span> ${p1Obj.name} (Asist: ${p2Obj.name})</div>
+                       <div class="event-desc">${description}</div>`
+            });
+        }
+    </script>
+</body>
+</html>
