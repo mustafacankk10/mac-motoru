@@ -3,252 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MANAGER RP - Maç Motoru </title>
+    <title>MANAGER RP - Maç Motoru V7</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
-
         :root {
-            --bg: #07080b;
-            --surface: #0f1117;
-            --surface2: #171b24;
-            --border: #1e2230;
-            --border2: #262d3d;
-            --green: #00e676;
-            --green-dim: #00c853;
-            --green-glow: rgba(0,230,118,0.15);
-            --yellow: #ffd600;
-            --red: #ff1744;
-            --blue: #448aff;
-            --purple: #aa00ff;
-            --text: #dde2ed;
-            --muted: #5a6478;
-            --muted2: #3a4055;
+            --bg:#07080b;--surface:#0f1117;--surface2:#171b24;
+            --border:#1e2230;--border2:#262d3d;
+            --green:#00e676;--green-dim:#00c853;
+            --yellow:#ffd600;--red:#ff1744;--blue:#448aff;
+            --text:#dde2ed;--muted:#5a6478;--muted2:#3a4055;
         }
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:2.5rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;background-image:radial-gradient(ellipse 60% 40% at 15% 0%,rgba(0,230,118,.05) 0%,transparent 70%),radial-gradient(ellipse 40% 30% at 85% 100%,rgba(68,138,255,.05) 0%,transparent 70%);}
+        .header{text-align:center;margin-bottom:1.8rem;}
+        .header-eyebrow{font-size:.65rem;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+        .header-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:5px;line-height:1;}
+        .header-title em{color:var(--green);font-style:normal;}
+        .badge{display:inline-block;background:linear-gradient(135deg,var(--green-dim),var(--green));color:#000;font-size:.58rem;font-weight:800;letter-spacing:1.5px;padding:3px 10px;border-radius:20px;margin-left:10px;vertical-align:middle;text-transform:uppercase;}
+        .header-sub{color:var(--muted);font-size:.75rem;margin-top:8px;}
+        .header-sub span{color:var(--green);}
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        .apikey-bar{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid #3d3000;border-radius:10px;padding:10px 16px;margin-bottom:1.2rem;width:100%;max-width:740px;flex-wrap:wrap;}
+        .apikey-bar label{font-size:.75rem;font-weight:600;color:var(--yellow);white-space:nowrap;}
+        .apikey-bar input{flex:1;min-width:200px;background:var(--bg);color:var(--text);border:1px solid var(--border2);padding:7px 12px;border-radius:6px;font-size:.82rem;font-family:'Inter',sans-serif;outline:none;}
+        .apikey-bar input:focus{border-color:var(--yellow);}
+        .key-hint{font-size:.65rem;color:var(--muted);}
+        .key-ok{color:var(--green)!important;font-weight:600;}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            padding: 2.5rem 1rem 4rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-image:
-                radial-gradient(ellipse 60% 40% at 15% 0%, rgba(0,230,118,0.05) 0%, transparent 70%),
-                radial-gradient(ellipse 40% 30% at 85% 100%, rgba(68,138,255,0.05) 0%, transparent 70%);
-        }
+        .power-bar{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:12px 20px;margin-bottom:2rem;width:100%;max-width:740px;}
+        .power-bar label{font-size:.8rem;font-weight:600;color:var(--blue);white-space:nowrap;}
+        .power-bar select{flex:1;background:var(--bg);color:var(--text);border:1px solid var(--border2);padding:8px 14px;border-radius:6px;font-size:.85rem;font-family:'Inter',sans-serif;outline:none;cursor:pointer;}
 
-        /* ─ HEADER ────────────────────────────────────── */
-        .header { text-align: center; margin-bottom: 2.5rem; }
-        .header-eyebrow {
-            font-size: 0.68rem; letter-spacing: 4px; color: var(--muted);
-            text-transform: uppercase; margin-bottom: 6px;
-        }
-        .header-title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 3.4rem; letter-spacing: 5px; line-height: 1;
-            color: var(--text);
-        }
-        .header-title em { color: var(--green); font-style: normal; }
-        .badge {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--green-dim), var(--green));
-            color: #000; font-size: 0.6rem; font-weight: 800;
-            letter-spacing: 1.5px; padding: 3px 10px;
-            border-radius: 20px; margin-left: 10px;
-            vertical-align: middle; text-transform: uppercase;
-        }
-        .header-sub { color: var(--muted); font-size: 0.75rem; margin-top: 10px; letter-spacing: 0.5px; }
-        .header-sub span { color: var(--green); }
+        .match-setup{display:flex;gap:1rem;width:100%;max-width:840px;align-items:flex-start;}
+        .team-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;transition:border-color .3s;}
+        .team-card:hover{border-color:var(--border2);}
+        .team-input{width:100%;background:transparent;border:none;border-bottom:2px solid var(--border2);color:var(--text);font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;outline:none;text-align:center;padding:6px 0;margin-bottom:1.2rem;transition:border-color .2s;}
+        .team-input:focus{border-bottom-color:var(--green);}
+        .team-input::placeholder{color:var(--muted2);}
+        .upload-label{display:block;font-size:.63rem;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:7px;text-transform:uppercase;}
 
-        /* ─ POWER BAR ─────────────────────────────────── */
-        .power-bar {
-            display: flex; align-items: center; gap: 12px;
-            background: var(--surface); border: 1px solid var(--border2);
-            border-radius: 10px; padding: 12px 20px;
-            margin-bottom: 2rem; width: 100%; max-width: 740px;
-        }
-        .power-bar label { font-size: 0.8rem; font-weight: 600; color: var(--blue); white-space: nowrap; }
-        .power-bar select {
-            flex: 1; background: var(--bg); color: var(--text);
-            border: 1px solid var(--border2); padding: 8px 14px;
-            border-radius: 6px; font-size: 0.85rem;
-            font-family: 'Inter', sans-serif; outline: none; cursor: pointer;
-        }
+        .png-zone{position:relative;border:2px dashed var(--border2);border-radius:10px;min-height:96px;display:flex;align-items:center;justify-content:center;margin-bottom:6px;cursor:pointer;transition:all .25s;background:var(--bg);overflow:hidden;}
+        .png-zone:hover{border-color:var(--green);background:rgba(0,230,118,.02);}
+        .png-zone.scanning{border-color:var(--blue);animation:puls 1s infinite;}
+        .png-zone.done{border-color:var(--green);border-style:solid;}
+        .png-zone.error{border-color:var(--red);border-style:solid;}
+        @keyframes puls{0%,100%{box-shadow:0 0 0 0 rgba(68,138,255,0)}50%{box-shadow:0 0 0 4px rgba(68,138,255,.2)}}
+        .png-zone input[type="file"]{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:2;}
+        .png-inner{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px;pointer-events:none;}
+        .png-icon{font-size:1.6rem;}
+        .png-status{font-size:.76rem;font-weight:500;text-align:center;}
+        .png-sub{font-size:.63rem;color:var(--muted);}
+        .scan-log{font-size:.68rem;font-family:monospace;margin-bottom:8px;min-height:14px;color:var(--blue);}
 
-        /* ─ MATCH SETUP ───────────────────────────────── */
-        .match-setup { display: flex; gap: 1rem; width: 100%; max-width: 840px; align-items: flex-start; }
-        .team-card {
-            flex: 1; background: var(--surface);
-            border: 1px solid var(--border); border-radius: 14px;
-            padding: 1.5rem; transition: border-color 0.3s;
-        }
-        .team-card:hover { border-color: var(--border2); }
+        .roster-chips{display:none;flex-wrap:wrap;gap:4px;margin-bottom:1rem;}
+        .roster-chips.active{display:flex;}
+        .chip{background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;font-size:.67rem;}
+        .chip em{color:var(--green);font-style:normal;font-size:.6rem;}
 
-        .team-input {
-            width: 100%; background: transparent; border: none;
-            border-bottom: 2px solid var(--border2); color: var(--text);
-            font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem;
-            letter-spacing: 2px; outline: none; text-align: center;
-            padding: 6px 0; margin-bottom: 1.3rem; transition: border-color 0.2s;
-        }
-        .team-input:focus { border-bottom-color: var(--green); }
-        .team-input::placeholder { color: var(--muted2); }
+        .upload-zone{position:relative;border:1px dashed var(--border2);border-radius:8px;padding:10px 12px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:1rem;}
+        .upload-zone:hover{border-color:var(--green);}
+        .upload-zone input[type="file"]{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;}
+        .upload-name{font-size:.77rem;color:var(--text);}
+        .upload-ok{color:var(--green)!important;}
 
-        .upload-label {
-            display: block; font-size: 0.65rem; font-weight: 700;
-            letter-spacing: 2px; color: var(--muted);
-            margin-bottom: 7px; text-transform: uppercase;
-        }
+        .vs-col{display:flex;align-items:center;justify-content:center;padding:0 .2rem;}
+        .vs-text{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--border2);letter-spacing:3px;}
 
-        /* PNG Upload – big zone */
-        .png-zone {
-            position: relative; border: 2px dashed var(--border2);
-            border-radius: 10px; padding: 0; margin-bottom: 1rem;
-            cursor: pointer; transition: all 0.25s; overflow: hidden;
-            min-height: 110px; display: flex; align-items: center; justify-content: center;
-            background: var(--bg);
-        }
-        .png-zone:hover { border-color: var(--green); background: rgba(0,230,118,0.02); }
-        .png-zone.scanning { border-color: var(--blue); animation: pulse-border 1s infinite; }
-        .png-zone.done { border-color: var(--green); border-style: solid; }
-        .png-zone.error { border-color: var(--red); border-style: solid; }
-        @keyframes pulse-border {
-            0%,100% { box-shadow: 0 0 0 0 rgba(68,138,255,0); }
-            50% { box-shadow: 0 0 0 4px rgba(68,138,255,0.2); }
-        }
-        .png-zone input[type="file"] {
-            position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; z-index:2;
-        }
-        .png-inner { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px; z-index:1; }
-        .png-icon { font-size: 1.8rem; }
-        .png-status { font-size: 0.8rem; color: var(--text); font-weight: 500; text-align: center; }
-        .png-sub { font-size: 0.68rem; color: var(--muted); }
-        .png-preview-img {
-            width: 100%; height: 100px; object-fit: cover;
-            border-radius: 8px; display: none;
-        }
-        .png-preview-img.active { display: block; }
+        .action-wrap{margin:1.8rem 0 0;}
+        .btn-sim{background:linear-gradient(135deg,var(--green-dim),var(--green));color:#000;border:none;border-radius:8px;padding:14px 52px;font-family:'Bebas Neue',sans-serif;font-size:1.35rem;letter-spacing:3px;cursor:pointer;transition:all .2s;}
+        .btn-sim:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,230,118,.3);}
+        .btn-sim:active{transform:translateY(0);}
 
-        /* Roster chips */
-        .roster-chips {
-            display: none; flex-wrap: wrap; gap: 5px;
-            margin-top: 0; margin-bottom: 1rem;
-        }
-        .roster-chips.active { display: flex; }
-        .chip {
-            background: var(--surface2); border: 1px solid var(--border2);
-            border-radius: 6px; padding: 3px 8px;
-            font-size: 0.7rem; color: var(--text); line-height: 1.4;
-        }
-        .chip em { color: var(--green); font-style: normal; font-size: 0.62rem; }
-
-        /* Txt upload (taktik) */
-        .upload-zone {
-            position: relative; border: 1px dashed var(--border2);
-            border-radius: 8px; padding: 10px 12px; text-align: center;
-            cursor: pointer; transition: all 0.2s; margin-bottom: 1rem;
-        }
-        .upload-zone:hover { border-color: var(--green); background: rgba(0,230,118,0.02); }
-        .upload-zone input[type="file"] {
-            position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;
-        }
-        .upload-name { font-size: 0.8rem; color: var(--text); }
-        .upload-hint { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
-        .upload-ok { color: var(--green) !important; }
-
-        /* VS */
-        .vs-col { display: flex; align-items: center; justify-content: center; padding: 0 0.3rem; }
-        .vs-text { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--border2); letter-spacing: 3px; }
-
-        /* ─ BUTTON ────────────────────────────────────── */
-        .action-wrap { margin: 1.8rem 0 0; }
-        .btn-sim {
-            background: linear-gradient(135deg, var(--green-dim), var(--green));
-            color: #000; border: none; border-radius: 8px;
-            padding: 15px 56px; font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.4rem; letter-spacing: 3px; cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-sim:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,230,118,0.3); }
-        .btn-sim:active { transform: translateY(0); }
-        .btn-sim:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
-
-        /* ─ REPORT ────────────────────────────────────── */
-        .match-report { display: none; width: 100%; max-width: 840px; margin-top: 2rem; flex-direction: column; gap: 1.2rem; }
-        .match-report.active { display: flex; }
-
-        .score-board {
-            background: var(--surface); border: 1px solid var(--border2);
-            border-radius: 14px; padding: 2.2rem; text-align: center;
-        }
-        .score-league { font-size: 0.7rem; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 14px; }
-        .score-main {
-            font-family: 'Bebas Neue', sans-serif; font-size: 3.8rem;
-            letter-spacing: 4px; display: flex; align-items: center; justify-content: center; gap: 24px;
-        }
-        .score-team { font-size: 1.3rem; color: var(--muted); flex: 1; text-align: center; }
-        .score-digits { color: var(--green); min-width: 110px; }
-
-        .section-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
-        .section-head {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 18px; background: var(--surface2); border-bottom: 1px solid var(--border);
-        }
-        .section-head h3 { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; }
-        .btn-copy {
-            background: var(--bg); border: 1px solid var(--border2);
-            color: var(--muted); padding: 5px 14px; border-radius: 5px;
-            font-size: 0.75rem; font-weight: 600; cursor: pointer;
-            transition: all 0.2s; font-family: 'Inter', sans-serif;
-        }
-        .btn-copy:hover { color: var(--text); border-color: var(--muted); }
-        .section-body { padding: 18px; }
-
-        .event-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
-        .event-item:last-child { border-bottom: none; padding-bottom: 0; }
-        .event-header {
-            font-size: 0.88rem; font-weight: 600; margin-bottom: 5px;
-            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-        }
-        .event-min { color: var(--muted); font-weight: 500; font-size: 0.8rem; min-width: 34px; }
-        .ev-goal { color: var(--green); }
-        .ev-yellow { color: var(--yellow); }
-        .ev-red { color: var(--red); }
-        .event-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.55; padding-left: 42px; }
-
-        .stat-names { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; color: var(--muted); padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
-        .stat-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .stat-label { color: var(--muted); text-align: center; flex: 1; }
-        .stat-val { min-width: 80px; font-weight: 500; }
-        .stat-val:last-child { text-align: right; }
-
-        .motm-box {
-            background: linear-gradient(135deg, rgba(255,214,0,0.07), rgba(255,214,0,0.02));
-            border: 1px solid rgba(255,214,0,0.18); border-radius: 14px;
-            padding: 20px; text-align: center;
-            font-family: 'Bebas Neue', sans-serif; font-size: 1.45rem;
-            letter-spacing: 2px; color: var(--yellow);
-        }
-
-        .ai-text { font-size: 0.88rem; line-height: 1.75; color: var(--text); }
-        .ai-text p { margin-bottom: 10px; }
-        .ai-text p:last-child { margin-bottom: 0; }
-        .ai-text .hl { color: var(--green); font-weight: 600; }
-        .ai-text .danger { color: var(--red); font-weight: 600; }
-
-        /* scanning spinner inline */
-        .spin { display: inline-block; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* AI scanning overlay text */
-        .scan-log {
-            font-size: 0.72rem; color: var(--blue); font-family: monospace;
-            margin-top: 8px; min-height: 16px; text-align: center;
-        }
+        .match-report{display:none;width:100%;max-width:840px;margin-top:2rem;flex-direction:column;gap:1.2rem;}
+        .match-report.active{display:flex;}
+        .score-board{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:2rem;text-align:center;}
+        .score-league{font-size:.7rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;}
+        .score-main{font-family:'Bebas Neue',sans-serif;font-size:3.6rem;letter-spacing:4px;display:flex;align-items:center;justify-content:center;gap:20px;}
+        .score-team{font-size:1.25rem;color:var(--muted);flex:1;text-align:center;}
+        .score-digits{color:var(--green);min-width:100px;}
+        .section-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+        .section-head{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:var(--surface2);border-bottom:1px solid var(--border);}
+        .section-head h3{font-size:.84rem;font-weight:600;}
+        .btn-copy{background:var(--bg);border:1px solid var(--border2);color:var(--muted);padding:5px 13px;border-radius:5px;font-size:.73rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
+        .btn-copy:hover{color:var(--text);border-color:var(--muted);}
+        .section-body{padding:18px;}
+        .event-item{padding:11px 0;border-bottom:1px solid var(--border);}
+        .event-item:last-child{border-bottom:none;padding-bottom:0;}
+        .event-header{font-size:.87rem;font-weight:600;margin-bottom:5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+        .event-min{color:var(--muted);font-weight:500;font-size:.79rem;min-width:32px;}
+        .ev-goal{color:var(--green);}
+        .ev-yellow{color:var(--yellow);}
+        .ev-red{color:var(--red);}
+        .event-desc{font-size:.81rem;color:var(--muted);line-height:1.55;padding-left:40px;}
+        .stat-names{display:flex;justify-content:space-between;font-size:.79rem;font-weight:700;color:var(--muted);padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:12px;}
+        .stat-row{display:flex;justify-content:space-between;align-items:center;font-size:.84rem;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03);}
+        .stat-label{color:var(--muted);text-align:center;flex:1;}
+        .stat-val{min-width:80px;font-weight:500;}
+        .stat-val:last-child{text-align:right;}
+        .motm-box{background:linear-gradient(135deg,rgba(255,214,0,.07),rgba(255,214,0,.02));border:1px solid rgba(255,214,0,.18);border-radius:14px;padding:18px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:var(--yellow);}
+        .ai-text{font-size:.87rem;line-height:1.75;color:var(--text);}
+        .ai-text p{margin-bottom:10px;}
+        .ai-text p:last-child{margin-bottom:0;}
+        .ai-text .hl{color:var(--green);font-weight:600;}
+        .ai-text .danger{color:var(--red);font-weight:600;}
+        .spin{display:inline-block;animation:spin .8s linear infinite;}
+        @keyframes spin{to{transform:rotate(360deg);}}
+        .debug-box{background:#0a0000;border:1px solid #3a0000;border-radius:8px;padding:10px;margin-top:6px;font-size:.68rem;font-family:monospace;color:#ff6b6b;white-space:pre-wrap;word-break:break-all;display:none;}
+        .debug-box.show{display:block;}
     </style>
 </head>
 <body>
@@ -256,7 +117,13 @@
 <div class="header">
     <div class="header-eyebrow">Süper Lig RP</div>
     <div class="header-title">ANALİZ <em>MOTORU</em> <span class="badge">V7 AI Vision</span></div>
-    <div class="header-sub">PNG Kadro Tarama · <span>Claude Vision ile Otomatik Mevki Algılama</span> · Dinamik Anlatı</div>
+    <div class="header-sub">PNG Kadro Tarama · <span>Claude Vision · Otomatik Mevki Algılama</span></div>
+</div>
+
+<div class="apikey-bar">
+    <label>🔑 Anthropic API Key:</label>
+    <input type="password" id="apiKey" placeholder="sk-ant-api03-..." oninput="checkKey()">
+    <span class="key-hint" id="keyHint">console.anthropic.com → API Keys</span>
 </div>
 
 <div class="power-bar">
@@ -272,23 +139,22 @@
     <!-- EV SAHİBİ -->
     <div class="team-card">
         <input type="text" id="t1Name" class="team-input" placeholder="Ev Sahibi Takım">
-
-        <span class="upload-label">📸 Kadro Görseli (.png / .jpg)</span>
+        <span class="upload-label">📸 Kadro Görseli (PNG/JPG)</span>
         <div class="png-zone" id="pz1">
-            <input type="file" accept="image/*" onchange="scanRosterImage(this, 1)">
+            <input type="file" accept="image/*" onchange="scanImage(this,1)">
             <div class="png-inner" id="pi1">
                 <div class="png-icon">🖼️</div>
-                <div class="png-status">Kadro görselini bırak</div>
-                <div class="png-sub">PNG, JPG • AI otomatik okur</div>
+                <div class="png-status">Kadro görselini bırak veya tıkla</div>
+                <div class="png-sub">AI otomatik okur</div>
             </div>
         </div>
         <div class="scan-log" id="sl1"></div>
+        <div class="debug-box" id="db1"></div>
         <div class="roster-chips" id="rc1"></div>
-
         <span class="upload-label">📄 Taktik Dosyası (.txt)</span>
         <div class="upload-zone">
-            <input type="file" accept=".txt" onchange="loadTactic(this, 1)">
-            <div class="upload-name" id="t1-tac-name">📄 Taktik metnini yükle</div>
+            <input type="file" accept=".txt" onchange="loadTactic(this,1)">
+            <div class="upload-name" id="t1-tac">📄 Taktik metnini yükle</div>
         </div>
     </div>
 
@@ -297,29 +163,28 @@
     <!-- DEPLASMAN -->
     <div class="team-card">
         <input type="text" id="t2Name" class="team-input" placeholder="Deplasman Takım">
-
-        <span class="upload-label">📸 Kadro Görseli (.png / .jpg)</span>
+        <span class="upload-label">📸 Kadro Görseli (PNG/JPG)</span>
         <div class="png-zone" id="pz2">
-            <input type="file" accept="image/*" onchange="scanRosterImage(this, 2)">
+            <input type="file" accept="image/*" onchange="scanImage(this,2)">
             <div class="png-inner" id="pi2">
                 <div class="png-icon">🖼️</div>
-                <div class="png-status">Kadro görselini bırak</div>
-                <div class="png-sub">PNG, JPG • AI otomatik okur</div>
+                <div class="png-status">Kadro görselini bırak veya tıkla</div>
+                <div class="png-sub">AI otomatik okur</div>
             </div>
         </div>
         <div class="scan-log" id="sl2"></div>
+        <div class="debug-box" id="db2"></div>
         <div class="roster-chips" id="rc2"></div>
-
         <span class="upload-label">📄 Taktik Dosyası (.txt)</span>
         <div class="upload-zone">
-            <input type="file" accept=".txt" onchange="loadTactic(this, 2)">
-            <div class="upload-name" id="t2-tac-name">📄 Taktik metnini yükle</div>
+            <input type="file" accept=".txt" onchange="loadTactic(this,2)">
+            <div class="upload-name" id="t2-tac">📄 Taktik metnini yükle</div>
         </div>
     </div>
 </div>
 
 <div class="action-wrap">
-    <button class="btn-sim" id="simBtn" onclick="simulateMatch()">▷ Maçı Simüle Et</button>
+    <button class="btn-sim" onclick="simulateMatch()">▷ Maçı Simüle Et</button>
 </div>
 
 <div class="match-report" id="matchReport">
@@ -331,70 +196,51 @@
             <div class="score-team" id="sc-t2">Deplasman</div>
         </div>
     </div>
-
     <div class="section-box">
-        <div class="section-head">
-            <h3>🧠 Taktiksel Çarpışma Analizi</h3>
-            <button class="btn-copy" onclick="copySection('aiBox',this)">📋 Kopyala</button>
-        </div>
+        <div class="section-head"><h3>🧠 Taktiksel Çarpışma Analizi</h3><button class="btn-copy" onclick="copySection('aiBox',this)">📋 Kopyala</button></div>
         <div class="section-body"><div class="ai-text" id="aiBox"></div></div>
     </div>
-
     <div class="section-box">
-        <div class="section-head">
-            <h3>⏱️ Maç Günlüğü</h3>
-            <button class="btn-copy" onclick="copySection('eventLog',this)">📋 Kopyala</button>
-        </div>
+        <div class="section-head"><h3>⏱️ Maç Günlüğü</h3><button class="btn-copy" onclick="copySection('eventLog',this)">📋 Kopyala</button></div>
         <div class="section-body" id="eventLog"></div>
     </div>
-
     <div class="section-box">
-        <div class="section-head">
-            <h3>📊 İstatistikler</h3>
-            <button class="btn-copy" onclick="copySection('statsBox',this)">📋 Kopyala</button>
-        </div>
+        <div class="section-head"><h3>📊 İstatistikler</h3><button class="btn-copy" onclick="copySection('statsBox',this)">📋 Kopyala</button></div>
         <div class="section-body" id="statsBox"></div>
     </div>
-
     <div class="motm-box" id="motmBox"></div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════════════════════════
-const state = { rosters: [[], []], tacticLen: [0, 0] };
+const rosters = [[], []];
+const tacticLen = [0, 0];
 
-// ═══════════════════════════════════════════════════════════════
-//  POSITION NORMALIZER
-// ═══════════════════════════════════════════════════════════════
+function checkKey() {
+    const v = document.getElementById('apiKey').value.trim();
+    const h = document.getElementById('keyHint');
+    if (v.startsWith('sk-ant-')) {
+        h.textContent = '✅ API Key hazır — tarama aktif!';
+        h.className = 'key-hint key-ok';
+    } else {
+        h.textContent = 'console.anthropic.com → API Keys';
+        h.className = 'key-hint';
+    }
+}
+
 const POS_MAP = {
-    // Kaleci
-    'GK':'GK','KL':'GK','KALECİ':'GK','KALECI':'GK',
-    // CB
+    'GK':'GK','KL':'GK','KALECİ':'GK','KALECI':'GK','PORTERO':'GK',
     'CB':'CB','STP':'CB','STOPER':'CB','MD':'CB','DEF':'CB','DEFANS':'CB','MERKEZ DEFANS':'CB',
-    // FB
-    'RB':'FB','LB':'FB','SĞB':'FB','SGB':'FB','SLB':'FB','BEK':'FB',
-    'SAĞBEK':'FB','SOLBEK':'FB','SAĞ BEK':'FB','SOL BEK':'FB',
-    // WB
+    'RB':'FB','LB':'FB','SĞB':'FB','SGB':'FB','SLB':'FB','BEK':'FB','SAĞBEK':'FB','SOLBEK':'FB','SAĞ BEK':'FB','SOL BEK':'FB',
     'RWB':'WB','LWB':'WB',
-    // CDM
     'CDM':'CDM','DOS':'CDM','DERİN OS':'CDM','ON LİBERO':'CDM','ON LIBERO':'CDM','LİBERO':'CDM','LIBERO':'CDM',
-    // CM
     'CM':'CM','OS':'CM','ORTA SAHA':'CM','MF':'CM','PIVOT':'CM',
-    // CAM
     'CAM':'CAM','OOS':'CAM','OFANSIF OS':'CAM','10':'CAM',
-    // WM
     'RM':'WM','LM':'WM','SĞO':'WM','SGO':'WM','SLO':'WM',
-    // ST
     'ST':'ST','SNT':'ST','FORVET':'ST','FOR':'ST','FW':'ST','CF':'ST',
-    // SS
     'SS':'SS','SF':'SS','SERBEST FON':'SS',
-    // WF
     'RW':'WF','LW':'WF','SĞA':'WF','SGA':'WF','SLA':'WF',
     'SĞK':'WF','SGK':'WF','SLK':'WF',
-    'SAĞ KANAT':'WF','SOL KANAT':'WF','KANAT':'WF','KANATÇI':'WF',
-    'SAĞAÇIK':'WF','SOLAÇIK':'WF',
+    'SAĞ KANAT':'WF','SOL KANAT':'WF','KANAT':'WF','KANATÇI':'WF','SAĞAÇIK':'WF','SOLAÇIK':'WF',
 };
 
 function normPos(raw) {
@@ -407,10 +253,7 @@ function normPos(raw) {
     return 'CM';
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  IMAGE → BASE64
-// ═══════════════════════════════════════════════════════════════
-function fileToBase64(file) {
+function fileToB64(file) {
     return new Promise((res, rej) => {
         const r = new FileReader();
         r.onload = () => res(r.result.split(',')[1]);
@@ -419,143 +262,244 @@ function fileToBase64(file) {
     });
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  CLAUDE VISION – KADRO TARAMA
-// ═══════════════════════════════════════════════════════════════
-async function scanRosterImage(input, team) {
+// Görsel boyutunu küçült — büyük resimler API'yi zorluyor
+function resizeImage(file, maxDim) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+            let { width, height } = img;
+            if (width <= maxDim && height <= maxDim) {
+                // Küçültmeye gerek yok, doğrudan b64'e çevir
+                fileToB64(file).then(resolve);
+                return;
+            }
+            const scale = maxDim / Math.max(width, height);
+            width = Math.round(width * scale);
+            height = Math.round(height * scale);
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            // JPEG olarak çıkar (PNG'den çok daha küçük)
+            const b64 = canvas.toDataURL('image/jpeg', 0.88).split(',')[1];
+            resolve(b64);
+        };
+        img.onerror = () => {
+            URL.revokeObjectURL(url);
+            fileToB64(file).then(resolve);
+        };
+        img.src = url;
+    });
+}
+
+async function scanImage(input, team) {
     if (!input.files.length) return;
     const file = input.files[0];
     const idx = team - 1;
-    const pz = document.getElementById(`pz${team}`);
-    const pi = document.getElementById(`pi${team}`);
-    const sl = document.getElementById(`sl${team}`);
-    const rc = document.getElementById(`rc${team}`);
+    const pz  = document.getElementById('pz'  + team);
+    const pi  = document.getElementById('pi'  + team);
+    const sl  = document.getElementById('sl'  + team);
+    const rc  = document.getElementById('rc'  + team);
+    const db  = document.getElementById('db'  + team);
 
-    // UI – taranıyor
-    pz.classList.add('scanning');
-    pz.classList.remove('done','error');
-    pi.innerHTML = `<div class="png-icon"><span class="spin">⟳</span></div>
-                    <div class="png-status" style="color:var(--blue)">AI görsel taranıyor…</div>
-                    <div class="png-sub">${file.name}</div>`;
-    sl.textContent = '▸ Görsel API\'ye gönderiliyor…';
-    rc.classList.remove('active');
+    db.className = 'debug-box';
+    db.textContent = '';
+
+    const apiKey = document.getElementById('apiKey').value.trim();
+    if (!apiKey.startsWith('sk-ant-')) {
+        sl.style.color = 'var(--yellow)';
+        sl.textContent = '⚠️ Önce geçerli bir API Key girin!';
+        pz.className = 'png-zone error';
+        pi.innerHTML = '<div class="png-icon">⚠️</div><div class="png-status" style="color:var(--yellow)">API Key eksik</div>';
+        return;
+    }
+
+    pz.className = 'png-zone scanning';
+    pi.innerHTML = '<div class="png-icon"><span class="spin">⟳</span></div><div class="png-status" style="color:var(--blue)">AI taranıyor…</div><div class="png-sub">' + file.name + '</div>';
+    sl.style.color = 'var(--blue)';
+    sl.textContent = '▸ Görsel hazırlanıyor…';
+    rc.className = 'roster-chips';
     rc.innerHTML = '';
 
     try {
-        const b64 = await fileToBase64(file);
-        const mime = file.type || 'image/png';
+        // Görseli max 1200px'e küçült, JPEG olarak gönder
+        sl.textContent = '▸ Görsel yeniden boyutlandırılıyor…';
+        const b64 = await resizeImage(file, 1200);
+        const mime = 'image/jpeg';
 
-        sl.textContent = '▸ Claude Vision analiz ediyor…';
+        sl.textContent = '▸ Claude Vision\'a gönderiliyor…';
 
-        const systemPrompt = `Sen bir futbol kadrosu okuma asistanısın. Sana bir futbol takımı kadro görseli verilecek.
-Görseldeki TÜM oyuncuların isimlerini ve mevkilerini oku.
-Mevkileri şu kısaltmalar ile normalize et: KL, STP, SĞB, SLB, DOS, ON LİBERO, OS, OOS, SĞO, SLO, SĞK, SLK, SNT, SF, KANAT, BEK.
-SADECE JSON döndür, başka hiçbir şey yazma. Format:
-{"players":[{"name":"Oyuncu Adı","pos":"MEVKİ"},{"name":"...","pos":"..."}]}
-Görselde sayı/numara varsa atla, sadece isim ve mevki al. Mevki yoksa tahmin et.`;
+        const requestBody = {
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1500,
+            system: `Sen bir futbol kadrosu okuma asistanısın. Kullanıcının yüklediği görseldeki TÜM oyuncuların isimlerini ve mevkilerini tespit et.
+
+Oyuncunun görseldeki konumuna göre mevkiyi belirle:
+- En arkada tek başına duran = KL (Kaleci)
+- Onun önündeki sıra = STP (Stoper/Defans)
+- Yanlardan oynayan defanslar = BEK
+- Orta bölge = OS (Orta Saha)
+- En önde = SNT (Santrafor/Forvet)
+
+Eğer görsel bir kadro/diziliş görseli değilse bile, görünen oyuncu isimlerini ve yanlarındaki mevki bilgilerini oku.
+
+SADECE geçerli JSON döndür. Başka hiçbir şey yazma. Markdown kullanma:
+{"players":[{"name":"Oyuncu Adı","pos":"MEVKİ"}]}
+
+En az 1, tercihen 11+ oyuncu döndür.`,
+            messages: [{
+                role: 'user',
+                content: [
+                    {
+                        type: 'image',
+                        source: {
+                            type: 'base64',
+                            media_type: mime,
+                            data: b64
+                        }
+                    },
+                    {
+                        type: 'text',
+                        text: 'Bu futbol kadrosu görselindeki tüm oyuncuların isimlerini ve mevkilerini JSON formatında ver.'
+                    }
+                ]
+            }]
+        };
 
         const resp = await fetch('https://api.anthropic.com/v1/messages', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                model: 'claude-sonnet-4-20250514',
-                max_tokens: 1000,
-                system: systemPrompt,
-                messages: [{
-                    role: 'user',
-                    content: [{
-                        type: 'image',
-                        source: { type: 'base64', media_type: mime, data: b64 }
-                    },{
-                        type: 'text',
-                        text: 'Bu kadro görselindeki tüm oyuncuları ve mevkilerini JSON formatında ver.'
-                    }]
-                }]
-            })
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey,
+                'anthropic-version': '2023-06-01',
+                'anthropic-dangerous-direct-browser-access': 'true'
+            },
+            body: JSON.stringify(requestBody)
         });
 
-        if (!resp.ok) throw new Error(`API hatası: ${resp.status}`);
-        const data = await resp.json();
+        // Ham yanıtı her durumda oku
+        const rawText = await resp.text();
 
-        // İçerik bloklarından metin topla
-        const raw = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+        if (!resp.ok) {
+            // Hata detayını debug box'a yaz
+            db.className = 'debug-box show';
+            db.textContent = 'HTTP ' + resp.status + '\n' + rawText.slice(0, 500);
+            let errMsg = 'HTTP ' + resp.status;
+            try {
+                const errJson = JSON.parse(rawText);
+                errMsg = (errJson.error && errJson.error.message) || errMsg;
+            } catch(_) {}
+            throw new Error(errMsg);
+        }
 
-        // JSON çıkar
-        const jsonMatch = raw.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) throw new Error('JSON bulunamadı: ' + raw.slice(0,200));
+        // Başarılı yanıtı parse et
+        let data;
+        try {
+            data = JSON.parse(rawText);
+        } catch(e) {
+            db.className = 'debug-box show';
+            db.textContent = 'JSON parse hatası:\n' + rawText.slice(0, 600);
+            throw new Error('Sunucu yanıtı geçersiz JSON');
+        }
 
-        const parsed = JSON.parse(jsonMatch[0]);
-        const players = parsed.players || [];
-        if (players.length === 0) throw new Error('Oyuncu bulunamadı');
+        // Model yanıtını al
+        const modelText = (data.content || [])
+            .filter(b => b.type === 'text')
+            .map(b => b.text)
+            .join('');
 
-        // Roster oluştur
+        if (!modelText) {
+            db.className = 'debug-box show';
+            db.textContent = 'Model boş yanıt döndürdü.\nHam data: ' + rawText.slice(0, 400);
+            throw new Error('Model boş yanıt döndürdü');
+        }
+
+        // JSON bloğunu bul — ``` sarmalı olabilir
+        let jMatch = modelText.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+        let jsonStr = jMatch ? jMatch[1] : null;
+        if (!jsonStr) {
+            jMatch = modelText.match(/\{[\s\S]*\}/);
+            jsonStr = jMatch ? jMatch[0] : null;
+        }
+
+        if (!jsonStr) {
+            db.className = 'debug-box show';
+            db.textContent = 'JSON bulunamadı. Model yanıtı:\n' + modelText.slice(0, 600);
+            throw new Error('Yanıtta JSON bulunamadı — görsel kadro içeriyor mu?');
+        }
+
+        let parsed;
+        try {
+            parsed = JSON.parse(jsonStr);
+        } catch(e) {
+            db.className = 'debug-box show';
+            db.textContent = 'JSON ayrıştırma hatası:\n' + jsonStr.slice(0, 400);
+            throw new Error('JSON ayrıştırılamadı: ' + e.message);
+        }
+
+        const players = (parsed.players || []).filter(p => p && p.name && p.name.trim().length > 1);
+
+        if (players.length === 0) {
+            db.className = 'debug-box show';
+            db.textContent = 'Oyuncu listesi boş.\nModel yanıtı:\n' + modelText.slice(0, 500);
+            throw new Error('Görselde oyuncu adı tespit edilemedi');
+        }
+
         const roster = players.map(p => ({
             name: p.name.trim(),
-            rawPos: p.pos || 'OS',
+            rawPos: (p.pos || 'OS').trim(),
             normPos: normPos(p.pos)
-        })).filter(p => p.name.length > 1);
+        }));
+        rosters[idx] = roster;
 
-        state.rosters[idx] = roster;
-
-        // Chips göster
         rc.innerHTML = roster.map(p =>
-            `<div class="chip">${p.name} <em>[${p.rawPos}]</em></div>`
+            '<div class="chip">' + p.name + ' <em>[' + p.rawPos + ']</em></div>'
         ).join('');
-        rc.classList.add('active');
+        rc.className = 'roster-chips active';
 
-        // Zone güncelle
-        pz.classList.remove('scanning'); pz.classList.add('done');
-        pi.innerHTML = `<div class="png-icon">✅</div>
-                        <div class="png-status" style="color:var(--green)">${roster.length} oyuncu okundu</div>
-                        <div class="png-sub">${file.name}</div>`;
-        sl.textContent = `▸ ${roster.length} oyuncu başarıyla tanındı.`;
+        pz.className = 'png-zone done';
+        pi.innerHTML = '<div class="png-icon">✅</div><div class="png-status" style="color:var(--green)">' + roster.length + ' oyuncu okundu</div><div class="png-sub">' + file.name + '</div>';
         sl.style.color = 'var(--green)';
+        sl.textContent = '▸ ' + roster.length + ' oyuncu başarıyla tanındı.';
 
-    } catch(err) {
-        pz.classList.remove('scanning'); pz.classList.add('error');
-        pi.innerHTML = `<div class="png-icon">⚠️</div>
-                        <div class="png-status" style="color:var(--red)">Tarama başarısız</div>
-                        <div class="png-sub">${err.message.slice(0,60)}</div>`;
-        sl.textContent = '▸ Hata: ' + err.message.slice(0,80);
+    } catch (err) {
+        pz.className = 'png-zone error';
+        pi.innerHTML = '<div class="png-icon">⚠️</div><div class="png-status" style="color:var(--red)">Tarama başarısız</div><div class="png-sub">' + err.message.slice(0, 80) + '</div>';
         sl.style.color = 'var(--red)';
-        console.error(err);
+        sl.textContent = '▸ Hata: ' + err.message.slice(0, 100);
     }
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  TAKTİK TXT
-// ═══════════════════════════════════════════════════════════════
 function loadTactic(input, team) {
     if (!input.files.length) return;
     const file = input.files[0];
-    const el = document.getElementById(`t${team}-tac-name`);
+    const el = document.getElementById('t' + team + '-tac');
     el.textContent = '✅ ' + file.name;
     el.classList.add('upload-ok');
     const r = new FileReader();
-    r.onload = e => { state.tacticLen[team-1] = e.target.result.trim().length; };
+    r.onload = e => { tacticLen[team - 1] = e.target.result.trim().length; };
     r.readAsText(file, 'UTF-8');
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  HELPERS
-// ═══════════════════════════════════════════════════════════════
 function rng(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
-function pick(ti, role, banned = []) {
-    const roster = state.rosters[ti];
+function pick(ti, role, banned) {
+    banned = banned || [];
+    const roster = rosters[ti];
     const active = roster.filter(p => !banned.includes(p.name));
-    if (active.length === 0) return { name: `Oyuncu#${rng(1,99)}`, rawPos:'?', normPos:'CM' };
-
+    if (active.length === 0) return { name: 'Oyuncu#' + rng(1,99), rawPos:'?', normPos:'CM' };
     const pools = {
-        scorer:    ['ST','SS','WF','CAM'],
-        assist:    ['CAM','CM','WM','WF','FB','WB','CDM'],
-        card:      ['CB','FB','CDM','CM','WB'],
-        defensive: ['CB','FB','CDM'],
+        scorer: ['ST','SS','WF','CAM'],
+        assist: ['CAM','CM','WM','WF','FB','WB','CDM'],
+        card:   ['CB','FB','CDM','CM','WB'],
     };
-    let pool = active.filter(p => (pools[role]||[]).includes(p.normPos));
+    let pool = active.filter(p => (pools[role] || []).includes(p.normPos));
     if (pool.length === 0) pool = active.filter(p => p.normPos !== 'GK');
     if (pool.length === 0) pool = active;
-    return pool[rng(0, pool.length-1)];
+    return pool[rng(0, pool.length - 1)];
 }
 
 function pickDiff(ti, role, exclude, banned) {
@@ -566,187 +510,172 @@ function pickDiff(ti, role, exclude, banned) {
 
 function copySection(id, btn) {
     navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => {
-        const orig = btn.innerText;
+        const o = btn.innerText;
         btn.innerText = '✅ Kopyalandı!';
-        setTimeout(() => btn.innerText = orig, 2000);
+        setTimeout(() => btn.innerText = o, 2000);
     });
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  GOL & KART AÇIKLAMALARI
-// ═══════════════════════════════════════════════════════════════
 function goalDesc(scorer, assist) {
     const s = [
-        `${assist} sağ kanattan ceza sahasına sert bir pas bıraktı. Boşluğa koşan ${scorer} topa düzgün vurdu, top köşeyi buldu.`,
-        `Hızlı kontr atakta ${assist} ile birleşen ${scorer}, kaleciyle karşı karşıya pozisyonu soğukkanlılıkla değerlendirdi.`,
-        `Korner vuruşunda ${assist} topu arka direğe ortalarken ${scorer} muhteşem kafa vuruşuyla ağları sarstı.`,
-        `${assist}'ın nefis pasını ceza sahası dışında alan ${scorer}, muazzam bir volé ile topu fileye gönderdi.`,
-        `${assist} sol kanattan içeri kat ederek ${scorer}'a harika bir ara pas verdi. ${scorer} durmadan vurdu: gol!`,
-        `Taktik tahtasından çıkmış gibi gelişen atakta ${assist} ${scorer}'ı buldu; ${scorer} sağ alt köşeye plaseledi.`,
-        `Serbest vuruşta ${assist}'ın mükemmel yerleştirmesiyle top doğrudan ${scorer}'ın önüne düştü. Bitirişi harikaydı.`,
-        `${assist}'ın uzun pasıyla ceza sahasına giren ${scorer} savunmayı sırtıyla geçip topu ağlarla buluşturdu.`,
-        `${scorer} rakip topuğunun arasından geçerek içeri girdi; kaleciyi yerinden oynatıp golü buldu.`,
-        `Hızlı duran topda ${assist} kullandı. Ceza sahasında ${scorer} arka alan koşusuyla herkesi geride bırakıp tamamladı.`,
-        `${assist}'ın köşe vuruşunu ön direkte ${scorer} kestirdi — harika bir saptırmaydı!`,
-        `${scorer} ceza sahası dışında topu aldı, iki pas oynadıktan sonra ${assist}'dan geri aldı ve sol üst köşeye harika bir şüt çekti.`,
+        assist + ' sağ kanattan ceza sahasına derin bir pas bıraktı. Boşluğa koşan ' + scorer + ' topa sert vurdu, top köşeyi buldu.',
+        'Hızlı kontr atakta ' + assist + ' ile buluşan ' + scorer + ', kaleciyle karşı karşıya pozisyonu soğukkanlılıkla değerlendirdi.',
+        'Korner vuruşunda ' + assist + ' topu arka direğe ortalarken ' + scorer + ' muhteşem kafa vuruşuyla ağları sarstı.',
+        assist + '\'ın bölünmez pasını ceza sahası dışında alan ' + scorer + ', muazzam bir volé ile topu fileye gönderdi.',
+        assist + ' sol kanattan içeri kat ederek ' + scorer + '\'a harika bir ara pas verdi. ' + scorer + ' durmadan vurdu: gol!',
+        'Taktik tahtasından çıkmış gibi gelişen atakta ' + assist + ', ' + scorer + '\'ı buldu; ' + scorer + ' sağ alt köşeye plaseledi.',
+        'Serbest vuruşta ' + assist + '\'ın mükemmel yerleştirmesiyle top doğrudan ' + scorer + '\'ın önüne düştü. Bitirişi harikaydı.',
+        assist + '\'ın uzun pasıyla ceza sahasına giren ' + scorer + ' savunmayı sırtıyla geçip topu ağlarla buluşturdu.',
+        scorer + ' rakip topuğunun arasından geçerek içeri girdi; kaleciyi yerinden oynatıp golü buldu.',
+        'Hızlı duran topda ' + assist + ' kullandı. ' + scorer + ' arka alan koşusuyla herkesi geride bırakıp tamamladı.',
+        assist + '\'ın köşe vuruşunu ön direkte ' + scorer + ' kestirdi — harika bir saptırmaydı!',
+        scorer + ' ceza sahası dışından ' + assist + '\'a duvar yaptıktan sonra topu geri alıp sol üst köşeyi seçti.',
     ];
-    return s[rng(0, s.length-1)];
+    return s[rng(0, s.length - 1)];
 }
 
 function cardDesc(player, team, isRed, isDirect) {
-    if (isDirect) return [
-        `VAR incelemesi sonrası ${player}'ın art niyetli müdahalesi tescillendi. Hakem direkt kırmızıyı gösterdi — ${team} 10 kişiye düştü!`,
-        `${player} rakibini tam biçimde altına aldı; hakem tek el işareti yaparak kırmızı kartı uzattı. ${team} büyük sıkıntıda.`,
-    ][rng(0,1)];
-    if (isRed) return [
-        `Daha önce sarı kartı bulunan ${player} bu kez sınırı aştı. İkinci sarıyla birlikte kırmızı geldi. ${team} eksik kaldı!`,
-        `${player} uyarıyı unuttu ve bir kez daha foul yaptı. Hakem direkt kırmızıyı gösterdi; ${team} zorlu anlar yaşıyor.`,
-    ][rng(0,1)];
-    return [
-        `${player} rakibini yakalamak için gerekenden fazla güç kullandı. Hakem hemen sarıyı çıkardı.`,
-        `Taktiksel foul hakemi memnun etmedi. ${player} sarı kartını gördü.`,
-        `${player} beklenmedik bir anda hakem tarafından uyarıldı; tartışmalı bir karar.`,
-        `${player}'ın geç foulü sert tepki çekti ve hakem cebine giderek sarıyı gösterdi.`,
-    ][rng(0,3)];
+    if (isDirect) {
+        return ['VAR incelemesi sonrası ' + player + '\'ın art niyetli müdahalesi tescillendi. Hakem direkt kırmızıyı gösterdi — ' + team + ' 10 kişiye düştü!',
+                player + ' rakibini tam altına aldı; hakem duraksamadan kırmızı kartı uzattı. ' + team + ' büyük sıkıntıda.'][rng(0,1)];
+    }
+    if (isRed) {
+        return ['Daha önce sarı kartı bulunan ' + player + ' bu kez sınırı aştı. İkinci sarıyla birlikte kırmızı geldi. ' + team + ' eksik kaldı!',
+                player + ' uyarıyı unuttu ve bir kez daha foul yaptı. Hakem kırmızıyı gösterdi; ' + team + ' zorlu anlar yaşıyor.'][rng(0,1)];
+    }
+    return [player + ' rakibini yakalamak için gerekenden fazla güç kullandı. Hakem hemen sarıyı çıkardı.',
+            'Taktiksel foul hakemi memnun etmedi. ' + player + ' sarı kartını gördü.',
+            player + ' beklenmedik bir anda hakem tarafından uyarıldı; tartışmalı bir karar.',
+            player + '\'ın geç foulü sert tepki çekti, hakem cebine giderek sarıyı gösterdi.'][rng(0,3)];
 }
 
-function evHTML(min, headHtml, desc) {
-    return `<div class="event-header"><span class="event-min">${min}'</span> ${headHtml}</div><div class="event-desc">${desc}</div>`;
+function evHTML(min, head, desc) {
+    return '<div class="event-header"><span class="event-min">' + min + '\'</span> ' + head + '</div><div class="event-desc">' + desc + '</div>';
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  SİMÜLASYON
-// ═══════════════════════════════════════════════════════════════
 function simulateMatch() {
     const t1 = document.getElementById('t1Name').value.trim() || 'Ev Sahibi';
     const t2 = document.getElementById('t2Name').value.trim() || 'Deplasman';
     const adv = document.getElementById('squadAdv').value;
+    const yellows = [[], []];
+    const banned  = [[], []];
+    const events  = [];
 
-    let yellows = [[], []];
-    let banned  = [[], []];
-    let events  = [];
-
-    // ── Kartlar
-    for (let i = 0; i < rng(2,7); i++) {
-        const ti = rng(0,1);
+    for (let i = 0; i < rng(2, 7); i++) {
+        const ti = rng(0, 1);
         if (banned[ti].length >= 3) continue;
         const p = pick(ti, 'card', banned[ti]);
-        const tn = ti===0 ? t1 : t2;
-        const min = rng(4,90);
-
+        const tn = ti === 0 ? t1 : t2;
+        const min = rng(4, 90);
         if (yellows[ti].includes(p.name)) {
             events.push({ min, html: evHTML(min,
-                `<span class="ev-red">🟥 Kırmızı Kart (2. Sarı)</span> <strong>${p.name}</strong> — <em>${tn}</em>`,
-                cardDesc(p.name, tn, true, false)
-            )});
+                '<span class="ev-red">🟥 Kırmızı Kart (2. Sarı)</span> <strong>' + p.name + '</strong> — <em>' + tn + '</em>',
+                cardDesc(p.name, tn, true, false)) });
             banned[ti].push(p.name);
         } else {
             yellows[ti].push(p.name);
             events.push({ min, html: evHTML(min,
-                `<span class="ev-yellow">🟨 Sarı Kart</span> <strong>${p.name}</strong> — <em>${tn}</em>`,
-                cardDesc(p.name, tn, false, false)
-            )});
+                '<span class="ev-yellow">🟨 Sarı Kart</span> <strong>' + p.name + '</strong> — <em>' + tn + '</em>',
+                cardDesc(p.name, tn, false, false)) });
         }
     }
-
-    // Direkt kırmızı %10
-    if (rng(1,100) <= 10) {
-        const ti = rng(0,1);
+    if (rng(1, 100) <= 10) {
+        const ti = rng(0, 1);
         if (banned[ti].length < 3) {
-            const p = pick(ti,'card',banned[ti]);
-            const tn = ti===0 ? t1 : t2;
-            const min = rng(10,85);
+            const p = pick(ti, 'card', banned[ti]);
+            const tn = ti === 0 ? t1 : t2;
+            const min = rng(10, 85);
             events.push({ min, html: evHTML(min,
-                `<span class="ev-red">🟥 Direkt Kırmızı!</span> <strong>${p.name}</strong> — <em>${tn}</em>`,
-                cardDesc(p.name, tn, false, true)
-            )});
+                '<span class="ev-red">🟥 Direkt Kırmızı!</span> <strong>' + p.name + '</strong> — <em>' + tn + '</em>',
+                cardDesc(p.name, tn, false, true)) });
             banned[ti].push(p.name);
         }
     }
 
-    // ── Kazanma olasılığı
     let win1 = 50;
     if (adv === 't1') win1 += 20;
     if (adv === 't2') win1 -= 20;
-    const tacDiff = state.tacticLen[0] - state.tacticLen[1];
-    const tacBonus = Math.min(Math.max(Math.round(tacDiff/50), -30), 30);
-    win1 += tacBonus + (banned[1].length - banned[0].length)*22;
+    const td = tacticLen[0] - tacticLen[1];
+    const tb = Math.min(Math.max(Math.round(td / 50), -30), 30);
+    win1 += tb + (banned[1].length - banned[0].length) * 22;
     win1 = Math.min(95, Math.max(5, win1));
 
-    // ── Goller
-    let score = [0,0];
-    for (let i=0; i<6; i++) if (rng(1,100) <= win1/1.5)       score[0]++;
-    for (let i=0; i<6; i++) if (rng(1,100) <= (100-win1)/1.5) score[1]++;
+    const score = [0, 0];
+    for (let i = 0; i < 6; i++) if (rng(1,100) <= win1 / 1.5)       score[0]++;
+    for (let i = 0; i < 6; i++) if (rng(1,100) <= (100-win1) / 1.5) score[1]++;
     if (banned[0].length >= 2) score[0] = Math.min(score[0], rng(0,1));
     if (banned[1].length >= 2) score[1] = Math.min(score[1], rng(0,1));
 
-    let allScorers = [];
-    for (let i=0; i<score[0]; i++) addGoal(events, 0, t1, banned[0], allScorers);
-    for (let i=0; i<score[1]; i++) addGoal(events, 1, t2, banned[1], allScorers);
+    const allScorers = [];
+    for (let i = 0; i < score[0]; i++) addGoal(events, 0, t1, banned[0], allScorers);
+    for (let i = 0; i < score[1]; i++) addGoal(events, 1, t2, banned[1], allScorers);
 
-    // ── Sırala & render
-    events.sort((a,b) => a.min - b.min);
+    events.sort((a, b) => a.min - b.min);
+
     document.getElementById('sc-t1').textContent = t1;
     document.getElementById('sc-t2').textContent = t2;
-    document.getElementById('sc-score').textContent = `${score[0]} - ${score[1]}`;
+    document.getElementById('sc-score').textContent = score[0] + ' - ' + score[1];
     document.getElementById('eventLog').innerHTML = events.length
-        ? events.map(e => `<div class="event-item">${e.html}</div>`).join('')
-        : `<div class="event-item"><div class="event-header"><span class="event-min">—</span> Kayda değer bir olay yaşanmadı.</div></div>`;
+        ? events.map(e => '<div class="event-item">' + e.html + '</div>').join('')
+        : '<div class="event-item"><div class="event-header"><span class="event-min">—</span> Kayda değer bir olay yaşanmadı.</div></div>';
 
-    document.getElementById('aiBox').innerHTML = buildAnalysis(t1,t2,adv,tacBonus,win1,banned,score);
+    document.getElementById('aiBox').innerHTML = buildAI(t1, t2, adv, tb, win1, banned, score);
 
-    const pos1 = Math.min(80, Math.max(20, win1+rng(-8,8)));
-    const sh1=score[0]+rng(4,11)+(win1>50?2:0), sh2=score[1]+rng(4,11)+(win1<=50?2:0);
-    document.getElementById('statsBox').innerHTML = `
-        <div class="stat-names"><span>${t1}</span><span>${t2}</span></div>
-        <div class="stat-row"><span class="stat-val">%${pos1}</span><span class="stat-label">Topla Oynama</span><span class="stat-val">%${100-pos1}</span></div>
-        <div class="stat-row"><span class="stat-val">${sh1}</span><span class="stat-label">Toplam Şut</span><span class="stat-val">${sh2}</span></div>
-        <div class="stat-row"><span class="stat-val">${score[0]+rng(1,4)}</span><span class="stat-label">İsabetli Şut</span><span class="stat-val">${score[1]+rng(1,4)}</span></div>
-        <div class="stat-row"><span class="stat-val">${rng(220,480)}</span><span class="stat-label">İsabetli Pas</span><span class="stat-val">${rng(220,480)}</span></div>
-        <div class="stat-row"><span class="stat-val">${yellows[0].length} Sarı / ${banned[0].length} Kırmızı</span><span class="stat-label">Kartlar</span><span class="stat-val">${yellows[1].length} Sarı / ${banned[1].length} Kırmızı</span></div>
-    `;
+    const pos1 = Math.min(80, Math.max(20, win1 + rng(-8,8)));
+    const sh1 = score[0] + rng(4,11) + (win1 > 50 ? 2 : 0);
+    const sh2 = score[1] + rng(4,11) + (win1 <= 50 ? 2 : 0);
+    document.getElementById('statsBox').innerHTML =
+        '<div class="stat-names"><span>' + t1 + '</span><span>' + t2 + '</span></div>' +
+        '<div class="stat-row"><span class="stat-val">%' + pos1 + '</span><span class="stat-label">Topla Oynama</span><span class="stat-val">%' + (100-pos1) + '</span></div>' +
+        '<div class="stat-row"><span class="stat-val">' + sh1 + '</span><span class="stat-label">Toplam Şut</span><span class="stat-val">' + sh2 + '</span></div>' +
+        '<div class="stat-row"><span class="stat-val">' + (score[0]+rng(1,4)) + '</span><span class="stat-label">İsabetli Şut</span><span class="stat-val">' + (score[1]+rng(1,4)) + '</span></div>' +
+        '<div class="stat-row"><span class="stat-val">' + rng(220,480) + '</span><span class="stat-label">İsabetli Pas</span><span class="stat-val">' + rng(220,480) + '</span></div>' +
+        '<div class="stat-row"><span class="stat-val">' + yellows[0].length + ' Sarı / ' + banned[0].length + ' Kırmızı</span><span class="stat-label">Kartlar</span><span class="stat-val">' + yellows[1].length + ' Sarı / ' + banned[1].length + ' Kırmızı</span></div>';
 
-    const motm = allScorers.length > 0 ? allScorers[rng(0,allScorers.length-1)] : pick(rng(0,1),'scorer',[]).name;
-    document.getElementById('motmBox').textContent = `💫 Maçın Adamı: ${motm}  (${(rng(80,98)/10).toFixed(1)})`;
-
+    const motm = allScorers.length > 0
+        ? allScorers[rng(0, allScorers.length - 1)]
+        : pick(rng(0,1), 'scorer', []).name;
+    document.getElementById('motmBox').textContent = '💫 Maçın Adamı: ' + motm + '  (' + (rng(80,98)/10).toFixed(1) + ')';
     document.getElementById('matchReport').classList.add('active');
-    document.getElementById('matchReport').scrollIntoView({behavior:'smooth',block:'start'});
+    document.getElementById('matchReport').scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
 function addGoal(events, ti, tName, bannedList, scorersArr) {
-    const scorer = pick(ti,'scorer',bannedList);
-    const assist = pickDiff(ti,'assist',scorer.name,bannedList);
-    const min = rng(5,92);
+    const scorer = pick(ti, 'scorer', bannedList);
+    const assist = pickDiff(ti, 'assist', scorer.name, bannedList);
+    const min = rng(5, 92);
     scorersArr.push(scorer.name);
     events.push({ min, html: evHTML(min,
-        `<span class="ev-goal">⚽ Gol!</span> <strong>${scorer.name}</strong> <span style="color:var(--muted);font-size:0.8rem;">(Asist: ${assist.name})</span> — <em>${tName}</em>`,
+        '<span class="ev-goal">⚽ Gol!</span> <strong>' + scorer.name + '</strong> <span style="color:var(--muted);font-size:.79rem;">(Asist: ' + assist.name + ')</span> — <em>' + tName + '</em>',
         goalDesc(scorer.name, assist.name)
     )});
 }
 
-function buildAnalysis(t1,t2,adv,tacBonus,win1,banned,score) {
+function buildAI(t1, t2, adv, tb, win1, banned, score) {
     let h = '';
-    const kadroStr = adv==='t1'
-        ? `<span class="hl">${t1}</span> kağıt üstünde kadro kalitesiyle daha güçlüydü.`
+    const ks = adv==='t1'
+        ? '<span class="hl">' + t1 + '</span> kağıt üstünde kadro kalitesiyle daha güçlüydü.'
         : adv==='t2'
-        ? `<span class="hl">${t2}</span> kağıt üstünde daha ağır basan kadroya sahipti.`
+        ? '<span class="hl">' + t2 + '</span> kağıt üstünde daha ağır basan kadroya sahipti.'
         : 'İki takımın kadro kalitesi birbirine dengeydi.';
-    h += `<p><strong>Kadro Durumu:</strong> ${kadroStr}</p>`;
+    h += '<p><strong>Kadro Durumu:</strong> ' + ks + '</p>';
 
-    const tl1=state.tacticLen[0], tl2=state.tacticLen[1];
-    let tacStr = tl1||tl2
-        ? `${t1} menajeri ${tl1} karakterlik bir oyun planı oluştururken, ${t2} cephesinde ${tl2} karakterlik bir strateji okundu. `
+    const tl1 = tacticLen[0], tl2 = tacticLen[1];
+    let ts = (tl1 || tl2)
+        ? t1 + ' menajeri ' + tl1 + ' karakterlik bir oyun planı oluştururken, ' + t2 + ' cephesinde ' + tl2 + ' karakterlik bir strateji okundu. '
         : 'Taktik dosyası yüklenmedi. ';
-    if (Math.abs(tacBonus)<5) tacStr += 'Taktik detayı açısından iki taraf da birbirine denk görünüyordu.';
-    else if (tacBonus>0) tacStr += `<span class="hl">${t1}</span> daha kapsamlı taktik çalışmasıyla rakibini baskı altına almayı başardı.`;
-    else tacStr += `<span class="hl">${t2}</span>'nin daha detaylı hazırlığı sahada karşılığını buldu.`;
-    h += `<p><strong>Taktiksel Çarpışma:</strong> ${tacStr}</p>`;
+    if (Math.abs(tb) < 5) ts += 'Taktik detayı açısından iki taraf da birbirine denk görünüyordu.';
+    else if (tb > 0) ts += '<span class="hl">' + t1 + '</span> daha kapsamlı taktik çalışmasıyla rakibini baskı altına aldı.';
+    else ts += '<span class="hl">' + t2 + '</span>\'nin daha detaylı hazırlığı sahada karşılığını buldu.';
+    h += '<p><strong>Taktiksel Çarpışma:</strong> ' + ts + '</p>';
 
-    if (banned[0].length>0) h += `<p><strong>Disiplin:</strong> <span class="danger">${t1}</span> kırmızı kart(lar) nedeniyle sayısal eksikliğe düştü; bu durum oyun planını doğrudan sarstı.</p>`;
-    if (banned[1].length>0) h += `<p><strong>Disiplin:</strong> <span class="danger">${t2}</span> cephesindeki kırmızı kart şoku dengeyi tamamen lehine değiştirdi.</p>`;
+    if (banned[0].length > 0) h += '<p><strong>Disiplin:</strong> <span class="danger">' + t1 + '</span> kırmızı kart(lar) nedeniyle sayısal eksikliğe düştü; bu durum oyun planını doğrudan sarstı.</p>';
+    if (banned[1].length > 0) h += '<p><strong>Disiplin:</strong> <span class="danger">' + t2 + '</span> cephesindeki kırmızı kart şoku dengeyi tamamen değiştirdi.</p>';
 
-    const winner = score[0]>score[1] ? t1 : score[1]>score[0] ? t2 : null;
-    h += `<p><strong>Sonuç:</strong> ${winner ? `Maç sonunda <span class="hl">${winner}</span> sahadan galip ayrıldı.` : 'Maç beraberlikle noktalandı, iki taraf birer puan paylaştı.'}</p>`;
+    const w = score[0] > score[1] ? t1 : score[1] > score[0] ? t2 : null;
+    h += '<p><strong>Sonuç:</strong> ' + (w
+        ? 'Maç sonunda <span class="hl">' + w + '</span> sahadan galip ayrıldı.'
+        : 'Maç beraberlikle noktalandı, iki taraf birer puan paylaştı.') + '</p>';
     return h;
 }
 </script>
