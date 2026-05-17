@@ -3,143 +3,376 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MANAGER RP - Maç Motoru V8</title>
+    <title>MANAGER RP - Maç Motoru</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
+
         :root {
-            --bg:#07080b;--surface:#0f1117;--surface2:#171b24;
-            --border:#1e2230;--border2:#262d3d;
-            --green:#00e676;--green-dim:#00c853;
-            --yellow:#ffd600;--red:#ff1744;--blue:#448aff;
-            --text:#dde2ed;--muted:#5a6478;--muted2:#3a4055;
+            --bg: #08090c;
+            --surface: #111318;
+            --surface2: #1a1d26;
+            --border: #252932;
+            --border2: #2e3340;
+            --green: #00e676;
+            --green-dim: #00c853;
+            --yellow: #ffd600;
+            --red: #ff1744;
+            --blue: #448aff;
+            --text: #e8eaf0;
+            --muted: #6b7280;
+            --muted2: #4b5563;
         }
-        *{box-sizing:border-box;margin:0;padding:0;}
-        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:2.5rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;background-image:radial-gradient(ellipse 60% 40% at 15% 0%,rgba(0,230,118,.05) 0%,transparent 70%),radial-gradient(ellipse 40% 30% at 85% 100%,rgba(68,138,255,.05) 0%,transparent 70%);}
 
-        .header{text-align:center;margin-bottom:2rem;}
-        .header-eyebrow{font-size:.65rem;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
-        .header-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:5px;line-height:1;}
-        .header-title em{color:var(--green);font-style:normal;}
-        .badge{display:inline-block;background:linear-gradient(135deg,#1a3a2a,#0f2018);border:1px solid var(--green-dim);color:var(--green);font-size:.58rem;font-weight:800;letter-spacing:1.5px;padding:3px 10px;border-radius:20px;margin-left:10px;vertical-align:middle;text-transform:uppercase;}
-        .header-sub{color:var(--muted);font-size:.75rem;margin-top:8px;}
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .match-setup{display:flex;gap:1rem;width:100%;max-width:900px;align-items:flex-start;}
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: radial-gradient(ellipse at 20% 0%, rgba(0,230,118,0.04) 0%, transparent 60%),
+                              radial-gradient(ellipse at 80% 100%, rgba(68,138,255,0.04) 0%, transparent 60%);
+        }
 
-        .team-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;}
-        .team-input{width:100%;background:transparent;border:none;border-bottom:2px solid var(--border2);color:var(--text);font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;outline:none;text-align:center;padding:6px 0;margin-bottom:1.2rem;transition:border-color .2s;}
-        .team-input:focus{border-bottom-color:var(--green);}
-        .team-input::placeholder{color:var(--muted2);}
+        /* HEADER */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .header-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3.2rem;
+            letter-spacing: 4px;
+            line-height: 1;
+            color: var(--text);
+        }
+        .header-title span { color: var(--green); }
+        .version-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--green-dim), var(--green));
+            color: #000;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-left: 8px;
+            vertical-align: middle;
+            text-transform: uppercase;
+        }
+        .header-sub {
+            color: var(--muted);
+            font-size: 0.8rem;
+            margin-top: 8px;
+            letter-spacing: 1px;
+        }
 
-        .section-label{font-size:.63rem;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;display:block;}
+        /* POWER SELECTOR */
+        .power-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: 10px;
+            padding: 12px 20px;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 700px;
+        }
+        .power-bar label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--blue);
+            white-space: nowrap;
+        }
+        .power-bar select {
+            flex: 1;
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border2);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            cursor: pointer;
+        }
 
-        /* Kadro giriş tablosu */
-        .roster-table{width:100%;border-collapse:collapse;margin-bottom:1rem;}
-        .roster-table th{font-size:.63rem;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;padding:6px 4px;border-bottom:1px solid var(--border2);text-align:left;}
-        .roster-table td{padding:3px 2px;}
-        .roster-table input[type="text"]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'Inter',sans-serif;font-size:.8rem;padding:5px 7px;outline:none;transition:border-color .15s;}
-        .roster-table input[type="text"]:focus{border-color:var(--green);}
-        .roster-table select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'Inter',sans-serif;font-size:.75rem;padding:5px 4px;outline:none;cursor:pointer;}
-        .roster-table select:focus{border-color:var(--green);}
-        .row-num{font-size:.7rem;color:var(--muted2);width:20px;text-align:center;}
+        /* TEAMS */
+        .match-setup {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+            max-width: 820px;
+            align-items: stretch;
+        }
+        .team-card {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: border-color 0.3s;
+        }
+        .team-card:hover { border-color: var(--border2); }
+        .team-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--border2);
+            color: var(--text);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.6rem;
+            letter-spacing: 2px;
+            outline: none;
+            text-align: center;
+            padding: 6px 0;
+            margin-bottom: 1.2rem;
+            transition: border-color 0.2s;
+        }
+        .team-input:focus { border-bottom-color: var(--green); }
+        .team-input::placeholder { color: var(--muted2); }
 
-        .btn-add{background:transparent;border:1px dashed var(--border2);color:var(--muted);border-radius:6px;padding:7px;width:100%;font-size:.75rem;cursor:pointer;transition:all .2s;margin-bottom:.8rem;font-family:'Inter',sans-serif;}
-        .btn-add:hover{border-color:var(--green);color:var(--green);}
+        .upload-label {
+            display: block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+        .upload-zone {
+            position: relative;
+            border: 1px dashed var(--border2);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1rem;
+        }
+        .upload-zone:hover { border-color: var(--green); background: rgba(0,230,118,0.03); }
+        .upload-zone input[type="file"] {
+            position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;
+        }
+        .upload-name {
+            font-size: 0.82rem;
+            color: var(--text);
+        }
+        .upload-hint {
+            font-size: 0.68rem;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+        .upload-ok { color: var(--green) !important; }
 
-        .tactic-area{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;font-family:'Inter',sans-serif;font-size:.8rem;color:var(--text);resize:vertical;min-height:70px;outline:none;line-height:1.5;}
-        .tactic-area:focus{border-color:var(--green);}
-        .tactic-area::placeholder{color:var(--muted2);}
-        .char-count{font-size:.63rem;color:var(--muted2);text-align:right;margin-top:3px;}
+        /* ROSTER PREVIEW */
+        .roster-preview {
+            font-size: 0.72rem;
+            color: var(--muted);
+            background: var(--bg);
+            border-radius: 6px;
+            padding: 8px 10px;
+            max-height: 90px;
+            overflow-y: auto;
+            margin-top: -8px;
+            margin-bottom: 1rem;
+            display: none;
+            line-height: 1.7;
+        }
+        .roster-preview.active { display: block; }
+        .roster-preview span { color: var(--text); }
 
-        .vs-col{display:flex;align-items:center;justify-content:center;padding:0 .2rem;padding-top:120px;}
-        .vs-text{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--border2);letter-spacing:3px;}
+        .vs-col {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 0.5rem;
+        }
+        .vs-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            color: var(--border2);
+            letter-spacing: 2px;
+        }
 
-        .power-bar{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:12px 20px;margin:1.5rem 0;width:100%;max-width:900px;}
-        .power-bar label{font-size:.8rem;font-weight:600;color:var(--blue);white-space:nowrap;}
-        .power-bar select{flex:1;background:var(--bg);color:var(--text);border:1px solid var(--border2);padding:8px 14px;border-radius:6px;font-size:.85rem;font-family:'Inter',sans-serif;outline:none;cursor:pointer;}
+        /* BUTTON */
+        .action-wrap { margin: 1.5rem 0; }
+        .btn-sim {
+            background: linear-gradient(135deg, var(--green-dim), var(--green));
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 48px;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+        }
+        .btn-sim:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,230,118,0.25); }
+        .btn-sim:active { transform: translateY(0); }
 
-        .action-wrap{margin-bottom:2rem;}
-        .btn-sim{background:linear-gradient(135deg,var(--green-dim),var(--green));color:#000;border:none;border-radius:8px;padding:14px 52px;font-family:'Bebas Neue',sans-serif;font-size:1.35rem;letter-spacing:3px;cursor:pointer;transition:all .2s;}
-        .btn-sim:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,230,118,.3);}
-        .btn-sim:active{transform:translateY(0);}
+        /* REPORT */
+        .match-report {
+            display: none;
+            width: 100%;
+            max-width: 820px;
+            margin-top: 1.5rem;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        .match-report.active { display: flex; }
 
-        /* RAPOR */
-        .match-report{display:none;width:100%;max-width:900px;flex-direction:column;gap:1.2rem;}
-        .match-report.active{display:flex;}
-        .score-board{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:2rem;text-align:center;}
-        .score-league{font-size:.7rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;}
-        .score-main{font-family:'Bebas Neue',sans-serif;font-size:3.6rem;letter-spacing:4px;display:flex;align-items:center;justify-content:center;gap:20px;}
-        .score-team{font-size:1.25rem;color:var(--muted);flex:1;text-align:center;}
-        .score-digits{color:var(--green);min-width:100px;}
-        .section-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
-        .section-head{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:var(--surface2);border-bottom:1px solid var(--border);}
-        .section-head h3{font-size:.84rem;font-weight:600;}
-        .btn-copy{background:var(--bg);border:1px solid var(--border2);color:var(--muted);padding:5px 13px;border-radius:5px;font-size:.73rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
-        .btn-copy:hover{color:var(--text);border-color:var(--muted);}
-        .section-body{padding:18px;}
-        .event-item{padding:11px 0;border-bottom:1px solid var(--border);}
-        .event-item:last-child{border-bottom:none;padding-bottom:0;}
-        .event-header{font-size:.87rem;font-weight:600;margin-bottom:5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-        .event-min{color:var(--muted);font-weight:500;font-size:.79rem;min-width:32px;}
-        .ev-goal{color:var(--green);}
-        .ev-yellow{color:var(--yellow);}
-        .ev-red{color:var(--red);}
-        .event-desc{font-size:.81rem;color:var(--muted);line-height:1.55;padding-left:40px;}
-        .stat-names{display:flex;justify-content:space-between;font-size:.79rem;font-weight:700;color:var(--muted);padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:12px;}
-        .stat-row{display:flex;justify-content:space-between;align-items:center;font-size:.84rem;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03);}
-        .stat-label{color:var(--muted);text-align:center;flex:1;}
-        .stat-val{min-width:80px;font-weight:500;}
-        .stat-val:last-child{text-align:right;}
-        .motm-box{background:linear-gradient(135deg,rgba(255,214,0,.07),rgba(255,214,0,.02));border:1px solid rgba(255,214,0,.18);border-radius:14px;padding:18px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:var(--yellow);}
-        .ai-text{font-size:.87rem;line-height:1.75;color:var(--text);}
-        .ai-text p{margin-bottom:10px;}
-        .ai-text p:last-child{margin-bottom:0;}
-        .ai-text .hl{color:var(--green);font-weight:600;}
-        .ai-text .danger{color:var(--red);font-weight:600;}
+        .score-board {
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+        }
+        .score-league {
+            font-size: 0.72rem;
+            color: var(--muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .score-main {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3.5rem;
+            letter-spacing: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .score-team { font-size: 1.4rem; color: var(--muted); flex: 1; text-align: center; }
+        .score-digits { color: var(--green); min-width: 100px; }
+        .score-divider { color: var(--border2); }
 
-        .warn-toast{background:#1a1200;border:1px solid var(--yellow);color:var(--yellow);border-radius:8px;padding:10px 16px;font-size:.8rem;margin-bottom:1rem;display:none;width:100%;max-width:900px;text-align:center;}
-        .warn-toast.show{display:block;}
+        /* SECTION BOX */
+        .section-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 18px;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+        }
+        .section-head h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .btn-copy {
+            background: var(--bg);
+            border: 1px solid var(--border2);
+            color: var(--muted);
+            padding: 5px 14px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-copy:hover { color: var(--text); border-color: var(--muted); }
+        .section-body { padding: 18px; }
+
+        /* EVENTS */
+        .event-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .event-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .event-header {
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .event-min { color: var(--muted); font-weight: 500; font-size: 0.82rem; min-width: 32px; }
+        .ev-goal { color: var(--green); }
+        .ev-yellow { color: var(--yellow); }
+        .ev-red { color: var(--red); }
+        .event-desc {
+            font-size: 0.82rem;
+            color: var(--muted);
+            line-height: 1.5;
+            padding-left: 40px;
+        }
+
+        /* STATS */
+        .stat-names {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--muted);
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .stat-label { color: var(--muted); text-align: center; flex: 1; }
+        .stat-val { min-width: 80px; font-weight: 500; }
+        .stat-val:last-child { text-align: right; }
+
+        /* MOTM */
+        .motm-box {
+            background: linear-gradient(135deg, rgba(255,214,0,0.08), rgba(255,214,0,0.03));
+            border: 1px solid rgba(255,214,0,0.2);
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            color: var(--yellow);
+        }
+
+        /* AI TEXT */
+        .ai-text {
+            font-size: 0.88rem;
+            line-height: 1.7;
+            color: var(--text);
+        }
+        .ai-text .highlight { color: var(--green); font-weight: 600; }
+        .ai-text .warn { color: var(--yellow); }
+        .ai-text .danger { color: var(--red); }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <div class="header-eyebrow">Süper Lig RP</div>
-    <div class="header-title">ANALİZ <em>MOTORU</em> <span class="badge">V8 · API Gerekmez</span></div>
-    <div class="header-sub">Kadroyu elle gir · Taktik yaz · Maçı simüle et</div>
-</div>
-
-<div class="warn-toast" id="warnToast"></div>
-
-<div class="match-setup">
-    <!-- EV SAHİBİ -->
-    <div class="team-card">
-        <input type="text" id="t1Name" class="team-input" placeholder="Ev Sahibi Takım">
-        <span class="section-label">⚽ Kadro (en az 5 oyuncu)</span>
-        <table class="roster-table">
-            <thead><tr><th>#</th><th>Oyuncu Adı</th><th>Mevki</th></tr></thead>
-            <tbody id="roster1"></tbody>
-        </table>
-        <button class="btn-add" onclick="addRow(1)">+ Oyuncu Ekle</button>
-        <span class="section-label">📋 Taktik Notları</span>
-        <textarea class="tactic-area" id="tac1" placeholder="Oyun planı, pressing, geçiş… (isteğe bağlı)" oninput="updateChar(1)"></textarea>
-        <div class="char-count" id="cc1">0 karakter</div>
-    </div>
-
-    <div class="vs-col"><div class="vs-text">VS</div></div>
-
-    <!-- DEPLASMAN -->
-    <div class="team-card">
-        <input type="text" id="t2Name" class="team-input" placeholder="Deplasman Takım">
-        <span class="section-label">⚽ Kadro (en az 5 oyuncu)</span>
-        <table class="roster-table">
-            <thead><tr><th>#</th><th>Oyuncu Adı</th><th>Mevki</th></tr></thead>
-            <tbody id="roster2"></tbody>
-        </table>
-        <button class="btn-add" onclick="addRow(2)">+ Oyuncu Ekle</button>
-        <span class="section-label">📋 Taktik Notları</span>
-        <textarea class="tactic-area" id="tac2" placeholder="Oyun planı, pressing, geçiş… (isteğe bağlı)" oninput="updateChar(2)"></textarea>
-        <div class="char-count" id="cc2">0 karakter</div>
-    </div>
+    <div class="header-title">ANALİZ <span>MOTORU</span> <span class="version-badge">V6 Final</span></div>
+    <div class="header-sub">Gerçek Kadro Algılama · Taktik Çarpışması · Dinamik Anlatı</div>
 </div>
 
 <div class="power-bar">
@@ -151,12 +384,54 @@
     </select>
 </div>
 
+<div class="match-setup">
+    <!-- EV SAHİBİ -->
+    <div class="team-card">
+        <input type="text" id="t1Name" class="team-input" placeholder="Ev Sahibi Takım">
+
+        <span class="upload-label">Taktik Dosyası (.txt)</span>
+        <div class="upload-zone">
+            <input type="file" accept=".txt" onchange="loadTactic(this, 1)">
+            <div class="upload-name" id="t1-tac-name">📄 Taktik metnini yükle</div>
+        </div>
+
+        <span class="upload-label">Kadro Dosyası (.txt)</span>
+        <div class="upload-zone">
+            <input type="file" accept=".txt" onchange="loadRoster(this, 1)">
+            <div class="upload-name" id="t1-ros-name">📝 Kadroyu yükle</div>
+            <div class="upload-hint">İsim | Mevki (alt alta)</div>
+        </div>
+        <div class="roster-preview" id="t1-preview"></div>
+    </div>
+
+    <div class="vs-col"><div class="vs-text">VS</div></div>
+
+    <!-- DEPLASMAN -->
+    <div class="team-card">
+        <input type="text" id="t2Name" class="team-input" placeholder="Deplasman Takım">
+
+        <span class="upload-label">Taktik Dosyası (.txt)</span>
+        <div class="upload-zone">
+            <input type="file" accept=".txt" onchange="loadTactic(this, 2)">
+            <div class="upload-name" id="t2-tac-name">📄 Taktik metnini yükle</div>
+        </div>
+
+        <span class="upload-label">Kadro Dosyası (.txt)</span>
+        <div class="upload-zone">
+            <input type="file" accept=".txt" onchange="loadRoster(this, 2)">
+            <div class="upload-name" id="t2-ros-name">📝 Kadroyu yükle</div>
+            <div class="upload-hint">İsim | Mevki (alt alta)</div>
+        </div>
+        <div class="roster-preview" id="t2-preview"></div>
+    </div>
+</div>
+
 <div class="action-wrap">
     <button class="btn-sim" onclick="simulateMatch()">▷ Maçı Simüle Et</button>
 </div>
 
-<!-- RAPOR -->
 <div class="match-report" id="matchReport">
+
     <div class="score-board">
         <div class="score-league">⚽ Süper Lig · Simülasyon</div>
         <div class="score-main">
@@ -165,304 +440,379 @@
             <div class="score-team" id="sc-t2">Deplasman</div>
         </div>
     </div>
+
     <div class="section-box">
-        <div class="section-head"><h3>🧠 Taktiksel Çarpışma Analizi</h3><button class="btn-copy" onclick="copySection('aiBox',this)">📋 Kopyala</button></div>
-        <div class="section-body"><div class="ai-text" id="aiBox"></div></div>
+        <div class="section-head">
+            <h3>🧠 Taktiksel Çarpışma Analizi</h3>
+            <button class="btn-copy" onclick="copySection('aiBox', this)">📋 Kopyala</button>
+        </div>
+        <div class="section-body">
+            <div class="ai-text" id="aiBox"></div>
+        </div>
     </div>
+
     <div class="section-box">
-        <div class="section-head"><h3>⏱️ Maç Günlüğü</h3><button class="btn-copy" onclick="copySection('eventLog',this)">📋 Kopyala</button></div>
+        <div class="section-head">
+            <h3>⏱️ Maç Günlüğü</h3>
+            <button class="btn-copy" onclick="copySection('eventLog', this)">📋 Kopyala</button>
+        </div>
         <div class="section-body" id="eventLog"></div>
     </div>
+
     <div class="section-box">
-        <div class="section-head"><h3>📊 İstatistikler</h3><button class="btn-copy" onclick="copySection('statsBox',this)">📋 Kopyala</button></div>
+        <div class="section-head">
+            <h3>📊 İstatistikler</h3>
+            <button class="btn-copy" onclick="copySection('statsBox', this)">📋 Kopyala</button>
+        </div>
         <div class="section-body" id="statsBox"></div>
     </div>
+
     <div class="motm-box" id="motmBox"></div>
 </div>
 
 <script>
-// ── MEVKİ LİSTESİ ─────────────────────────────
-const POSITIONS = [
-    {val:'GK',  label:'KL — Kaleci'},
-    {val:'CB',  label:'STP — Stoper'},
-    {val:'FB',  label:'BEK — Bek'},
-    {val:'WB',  label:'Kanat Bek'},
-    {val:'CDM', label:'DOS — Defansif OS'},
-    {val:'CM',  label:'OS — Orta Saha'},
-    {val:'CAM', label:'OOS — Ofansif OS'},
-    {val:'WM',  label:'Kanat OS'},
-    {val:'WF',  label:'Kanatçı / Açık'},
-    {val:'SS',  label:'SF — Serbest Forvet'},
-    {val:'ST',  label:'SNT — Santrafor'},
-];
+// ─── VERİ ─────────────────────────────────────────────────────────────────────
+let state = {
+    rosters: [[], []],
+    tacticLen: [0, 0]
+};
 
-function posOptions(selected) {
-    return POSITIONS.map(p =>
-        `<option value="${p.val}"${p.val===selected?' selected':''}>${p.label}</option>`
-    ).join('');
+// Tüm bilinen Türkçe/yaygın mevki etiketleri → normalized kategori
+const POS_MAP = {
+    // Kaleci
+    'GK':'GK','KL':'GK','KALECİ':'GK','KALECI':'GK','PORTERO':'GK',
+
+    // Defans
+    'CB':'CB','STP':'CB','STOPER':'CB','MERKEZ DEFANS':'CB','MD':'CB','DEFANS':'CB','DEF':'CB',
+    'RB':'FB','LB':'FB','SĞB':'FB','SGB':'FB','SLB':'FB','BEK':'FB','SAĞ BEK':'FB','SOL BEK':'FB',
+    'SAĞBEK':'FB','SOLBEK':'FB','SAĞ BEKI':'FB','SOL BEKİ':'FB',
+    'RWB':'WB','LWB':'WB','SĞ KANAT BEK':'WB','SL KANAT BEK':'WB',
+
+    // Orta Saha
+    'CDM':'CDM','DOS':'CDM','DERİN OS':'CDM','DERİN ORTA SAHA':'CDM','D.O.S':'CDM',
+    'CM':'CM','OS':'CM','ORTA SAHA':'CM','MF':'CM','PIVOT':'CM',
+    'CAM':'CAM','OOS':'CAM','OFANSIF OS':'CAM','OFANSIF ORTA SAHA':'CAM','O.O.S':'CAM','10':'CAM',
+    'RM':'WM','LM':'WM','SĞO':'WM','SGO':'WM','SLO':'WM','SAĞ ORTA':'WM','SOL ORTA':'WM',
+
+    // Forvet
+    'ST':'ST','SNT':'ST','FORVET':'ST','FOR':'ST','FW':'ST','CF':'ST','9':'ST',
+    'SS':'SS','SF':'SS','SERBEST FON':'SS','İKİNCİ FORVETİ':'SS',
+    'RW':'WF','LW':'WF','SĞA':'WF','SGA':'WF','SLA':'WF','SAĞ AÇIK':'WF','SOL AÇIK':'WF',
+    'KANAT':'WF','SAĞAÇIK':'WF','SOLAÇIK':'WF','KANATÇI':'WF',
+};
+
+function normalizePos(raw) {
+    if (!raw) return 'CM';
+    const up = raw.trim().toUpperCase().replace(/İ/g,'İ').replace(/I/g,'I').replace(/Ş/g,'Ş').replace(/Ğ/g,'Ğ').replace(/Ü/g,'Ü').replace(/Ö/g,'Ö').replace(/Ç/g,'Ç');
+    // Direkt eşleşme
+    if (POS_MAP[up]) return POS_MAP[up];
+    // Kısmi eşleşme
+    for (const key of Object.keys(POS_MAP)) {
+        if (up.includes(key) || key.includes(up)) return POS_MAP[key];
+    }
+    return 'CM'; // Tanınmadıysa orta saha
 }
 
-const rowCounts = [0, 0];
-
-function addRow(team, name, pos) {
-    const tbody = document.getElementById('roster' + team);
-    rowCounts[team-1]++;
-    const n = rowCounts[team-1];
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-        <td class="row-num">${n}</td>
-        <td><input type="text" placeholder="Oyuncu Adı" value="${name||''}" style="min-width:90px"></td>
-        <td><select>${posOptions(pos||'CM')}</select></td>
-    `;
-    tbody.appendChild(tr);
+// ─── DOSYA YÜKLEME ─────────────────────────────────────────────────────────────
+function loadTactic(input, team) {
+    if (!input.files.length) return;
+    const file = input.files[0];
+    const idx = team - 1;
+    document.getElementById(`t${team}-tac-name`).textContent = '✅ ' + file.name;
+    document.getElementById(`t${team}-tac-name`).classList.add('upload-ok');
+    const reader = new FileReader();
+    reader.onload = e => { state.tacticLen[idx] = e.target.result.trim().length; };
+    reader.readAsText(file, 'UTF-8');
 }
 
-function updateChar(t) {
-    const v = document.getElementById('tac'+t).value.length;
-    document.getElementById('cc'+t).textContent = v + ' karakter';
+function loadRoster(input, team) {
+    if (!input.files.length) return;
+    const file = input.files[0];
+    const idx = team - 1;
+    document.getElementById(`t${team}-ros-name`).textContent = '✅ ' + file.name;
+    document.getElementById(`t${team}-ros-name`).classList.add('upload-ok');
+
+    const reader = new FileReader();
+    reader.onload = e => {
+        const lines = e.target.result.split(/\r?\n/);
+        const roster = [];
+        lines.forEach(line => {
+            if (line.trim().length < 2) return;
+            // Ayırıcı: | - ; , / tab
+            const parts = line.split(/[|;\-,\/\t]/).map(s => s.trim());
+            const name = parts[0];
+            if (name.length < 2) return;
+            const rawPos = parts[1] || 'OS';
+            const normPos = normalizePos(rawPos);
+            roster.push({ name, rawPos, normPos });
+        });
+
+        if (roster.length === 0) { alert('Kadro okunamadı, formatı kontrol et.'); return; }
+        state.rosters[idx] = roster;
+
+        // Preview
+        const preview = document.getElementById(`t${team}-preview`);
+        preview.innerHTML = roster.slice(0, 12).map(p =>
+            `<span>${p.name}</span> <span style="color:var(--green);font-size:0.65rem;">[${p.rawPos}]</span>  `
+        ).join('') + (roster.length > 12 ? `<span>+${roster.length-12} daha...</span>` : '');
+        preview.classList.add('active');
+    };
+    reader.readAsText(file, 'UTF-8');
 }
 
-// Başlangıç satırları
-for (let i = 0; i < 11; i++) { addRow(1); addRow(2); }
-
-// ── KADRO OKUMA ────────────────────────────────
-function getRoster(team) {
-    const rows = document.getElementById('roster'+team).querySelectorAll('tr');
-    const result = [];
-    rows.forEach(tr => {
-        const inputs = tr.querySelectorAll('input, select');
-        if (inputs.length < 2) return;
-        const name = inputs[0].value.trim();
-        const pos  = inputs[1].value;
-        if (name.length > 0) result.push({ name, normPos: pos });
-    });
-    return result;
-}
-
-// ── YARDIMCI ──────────────────────────────────
+// ─── YARDIMCI ──────────────────────────────────────────────────────────────────
 function rng(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
-function pick(roster, role, banned) {
-    banned = banned || [];
+// Mevki kategorisine göre havuzdan oyuncu seç (kırmızı kartlılar hariç)
+function pick(teamIdx, role, banned = []) {
+    const roster = state.rosters[teamIdx];
     const active = roster.filter(p => !banned.includes(p.name));
-    if (!active.length) return { name: 'Oyuncu#' + rng(1,99), normPos:'CM' };
-    const pools = {
-        scorer: ['ST','SS','WF','CAM'],
-        assist: ['CAM','CM','WM','WF','FB','WB','CDM'],
-        card:   ['CB','FB','CDM','CM','WB'],
-    };
-    let pool = active.filter(p => (pools[role]||[]).includes(p.normPos));
-    if (!pool.length) pool = active.filter(p => p.normPos !== 'GK');
-    if (!pool.length) pool = active;
-    return pool[rng(0, pool.length-1)];
+    if (active.length === 0) return { name: `Oyuncu #${rng(1,99)}`, rawPos:'?', normPos:'CM' };
+
+    let pool = [];
+
+    if (role === 'scorer') {
+        pool = active.filter(p => ['ST','SS','WF','CAM'].includes(p.normPos));
+    } else if (role === 'assist') {
+        pool = active.filter(p => ['CAM','CM','WM','WF','FB','WB'].includes(p.normPos));
+    } else if (role === 'card') {
+        pool = active.filter(p => ['CB','FB','CDM','CM','WB'].includes(p.normPos));
+    } else if (role === 'defensive') {
+        pool = active.filter(p => ['CB','FB','CDM'].includes(p.normPos));
+    }
+
+    if (pool.length === 0) {
+        pool = active.filter(p => p.normPos !== 'GK');
+        if (pool.length === 0) pool = active;
+    }
+    return pool[rng(0, pool.length - 1)];
 }
 
-function pickDiff(roster, role, exclude, banned) {
-    let p = pick(roster, role, banned), t = 0;
-    while (p.name === exclude && t++ < 10) p = pick(roster, role, banned);
+function pickDifferent(teamIdx, role, exclude, banned) {
+    let p = pick(teamIdx, role, banned);
+    let tries = 0;
+    while (p.name === exclude && tries < 10) {
+        p = pick(teamIdx, role, banned);
+        tries++;
+    }
     return p;
 }
 
+// ─── GOL SENARYOLARI ────────────────────────────────────────────────────────────
+function buildGoalDesc(scorerName, assistName, scorerPos, assistPos) {
+    const scenarios = [
+        () => `${assistName} sağ kanattan ceza sahasına derin bir pas bıraktı. Boşluğu gören ${scorerName} topa sert vurdu, top köşeyi buldu.`,
+        () => `Hızlı kontr atakta ${assistName} ile birleşen ${scorerName}, kaleciyle karşı karşıya pozisyonu soğukkanlılıkla değerlendirdi.`,
+        () => `Korner vuruşunda ${assistName} topu arka direğe ortalarken ${scorerName} muhteşem bir kafa vuruşuyla ağları sarstı.`,
+        () => `${assistName}'ın bölünmez pasını ceza sahası dışında alan ${scorerName}, muazzam bir volé ile topu fileye gönderdi.`,
+        () => `${assistName} sol kanattan içeri doğru kat ederek ${scorerName}'a nefis bir ara pas verdi. ${scorerName} durmadan vurdu: gol!`,
+        () => `Taktik tahtasından çıkmış gibi gelişen atakta ${assistName} ${scorerName}'ı buldu, ${scorerName} sağ köşeye plaseledi.`,
+        () => `Serbest vuruşta ${assistName}'ın mükemmel yerleştirmesiyle top doğrudan ${scorerName}'ın önüne düştü; bitirişi harikaydı.`,
+        () => `${assistName}'ın uzaktan üzerine bıraktığı topla ceza sahasına giren ${scorerName}, savunmayı geçip topu ağlarla buluşturdu.`,
+        () => `${scorerName} bireysel hareketini rakip topuğunun arasından sürdürerek içeri girdi ve kaleciyi yerinden oynatarak golü buldu.`,
+        () => `Hızlı duran topda ${assistName} kullandı, ceza sahasında ${scorerName} arka alan koşusuyla herkesi geride bırakıp tamamladı.`,
+    ];
+    return scenarios[rng(0, scenarios.length - 1)]();
+}
+
+function buildCardDesc(playerName, teamName, isRed, isDirectRed) {
+    if (isDirectRed) {
+        const lines = [
+            `VAR müdahalesi sonrası ${playerName}'ın art niyetli müdahalesi sahadaki herkesi şoke etti. Hakem kırmızı kartı çıkardı, ${teamName} 10 kişi kaldı!`,
+            `${playerName} rakibini tam topun geldiği anda altına aldı; hakem bir an duraksamadan direkt kırmızı gösterdi. ${teamName} büyük sıkıntıda.`,
+        ];
+        return lines[rng(0,lines.length-1)];
+    }
+    if (isRed) {
+        const lines = [
+            `Daha önce sarı kartı bulunan ${playerName} bu kez sınırı aştı. Hakem ikinci sarıyı çıkardı ve ardından kırmızıyı gösterdi. ${teamName} 10 kişiye düştü!`,
+            `${playerName} ilk sarının verdiği uyarıyı unutup bir kez daha foul yaptı. Hakem direkt kırmızı gösterdi, ${teamName} zorlu anlar yaşıyor.`,
+        ];
+        return lines[rng(0,lines.length-1)];
+    }
+    const lines = [
+        `${playerName} rakibini yakalamak için gerekenden fazla güç kullandı. Hakem hemen elini cebine götürdü.`,
+        `Taktiksel önlem olarak kullanılan foul, hakemi memnun etmedi. ${playerName} sarı kartını gördü.`,
+        `Sahayı daha önce yakmış olan ${playerName} bu sefer beklenmedik bir anda hakem tarafından uyarıldı.`,
+    ];
+    return lines[rng(0,lines.length-1)];
+}
+
+// ─── KOPYALA ──────────────────────────────────────────────────────────────────
 function copySection(id, btn) {
-    navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => {
-        const o = btn.innerText; btn.innerText = '✅ Kopyalandı!';
-        setTimeout(() => btn.innerText = o, 2000);
+    const el = document.getElementById(id);
+    navigator.clipboard.writeText(el.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = '✅ Kopyalandı!';
+        setTimeout(() => btn.innerText = orig, 2000);
     });
 }
 
-// ── ANLATIMLAR ────────────────────────────────
-function goalDesc(scorer, assist) {
-    const s = [
-        `${assist} sağ kanattan ceza sahasına derin bir pas bıraktı. Boşluğa koşan ${scorer} topa sert vurdu, top köşeyi buldu.`,
-        `Hızlı kontr atakta ${assist} ile buluşan ${scorer}, kaleciyle karşı karşıya pozisyonu soğukkanlılıkla değerlendirdi.`,
-        `Korner vuruşunda ${assist} topu arka direğe ortalarken ${scorer} muhteşem kafa vuruşuyla ağları sarstı.`,
-        `${assist}'ın bölünmez pasını ceza sahası dışında alan ${scorer}, muazzam bir volé ile topu fileye gönderdi.`,
-        `${assist} sol kanattan içeri kat ederek ${scorer}'a harika bir ara pas verdi. ${scorer} durmadan vurdu: gol!`,
-        `Taktik tahtasından çıkmış gibi gelişen atakta ${assist}, ${scorer}'ı buldu; ${scorer} sağ alt köşeye plaseledi.`,
-        `Serbest vuruşta ${assist}'ın mükemmel yerleştirmesiyle top doğrudan ${scorer}'ın önüne düştü. Bitirişi harikaydı.`,
-        `${assist}'ın uzun pasıyla ceza sahasına giren ${scorer} savunmayı sırtıyla geçip topu ağlarla buluşturdu.`,
-        `${scorer} rakip topuğunun arasından geçerek içeri girdi; kaleciyi yerinden oynatıp golü buldu.`,
-        `${assist} kullandı. Ceza sahasında ${scorer} arka alan koşusuyla herkesi geride bırakıp tamamladı.`,
-        `${assist}'ın köşe vuruşunu ön direkte ${scorer} kestirdi — harika bir saptırmaydı!`,
-        `${scorer} ceza sahası dışından ${assist}'a duvar yaptıktan sonra topu geri alıp sol üst köşeyi seçti.`,
-    ];
-    return s[rng(0, s.length-1)];
-}
-
-function cardDesc(player, team, isRed, isDirect) {
-    if (isDirect) return [
-        `VAR incelemesi sonrası ${player}'ın art niyetli müdahalesi tescillendi. Hakem direkt kırmızıyı gösterdi — ${team} 10 kişiye düştü!`,
-        `${player} rakibini tam altına aldı; hakem duraksamadan kırmızı kartı uzattı. ${team} büyük sıkıntıda.`
-    ][rng(0,1)];
-    if (isRed) return [
-        `Daha önce sarı kartı bulunan ${player} bu kez sınırı aştı. İkinci sarıyla birlikte kırmızı geldi. ${team} eksik kaldı!`,
-        `${player} uyarıyı unuttu ve bir kez daha foul yaptı. Hakem kırmızıyı gösterdi; ${team} zorlu anlar yaşıyor.`
-    ][rng(0,1)];
-    return [
-        `${player} rakibini yakalamak için gerekenden fazla güç kullandı. Hakem hemen sarıyı çıkardı.`,
-        `Taktiksel foul hakemi memnun etmedi. ${player} sarı kartını gördü.`,
-        `${player} beklenmedik bir anda hakem tarafından uyarıldı; tartışmalı bir karar.`,
-        `${player}'ın geç foulü sert tepki çekti, hakem cebine giderek sarıyı gösterdi.`
-    ][rng(0,3)];
-}
-
-function evHTML(min, head, desc) {
-    return `<div class="event-header"><span class="event-min">${min}'</span> ${head}</div><div class="event-desc">${desc}</div>`;
-}
-
-// ── SİMÜLASYON ───────────────────────────────
+// ─── MAÇI SİMÜLE ET ────────────────────────────────────────────────────────────
 function simulateMatch() {
     const t1 = document.getElementById('t1Name').value.trim() || 'Ev Sahibi';
     const t2 = document.getElementById('t2Name').value.trim() || 'Deplasman';
-    const adv = document.getElementById('squadAdv').value;
-    const tac1 = document.getElementById('tac1').value.trim().length;
-    const tac2 = document.getElementById('tac2').value.trim().length;
+    const squadAdv = document.getElementById('squadAdv').value;
 
-    const r1 = getRoster(1);
-    const r2 = getRoster(2);
+    // ── 1. İstatistik değişkenleri
+    let yellows = [[], []];   // yellows[0] = t1 sarı kartlılar
+    let redBanned = [[], []]; // redBanned[0] = t1 kırmızı kartlılar (sahadan çıkmış)
+    let events = [];
 
-    // Uyarı
-    const toast = document.getElementById('warnToast');
-    const warns = [];
-    if (r1.length < 5) warns.push(`${t1} için en az 5 oyuncu girin`);
-    if (r2.length < 5) warns.push(`${t2} için en az 5 oyuncu girin`);
-    if (warns.length) {
-        toast.textContent = '⚠️ ' + warns.join(' · ');
-        toast.className = 'warn-toast show';
-        toast.scrollIntoView({behavior:'smooth',block:'center'});
-        return;
-    }
-    toast.className = 'warn-toast';
+    // ── 2. Kartlar
+    const totalYellow = rng(2, 7);
+    for (let i = 0; i < totalYellow; i++) {
+        const ti = rng(0, 1);
+        if (redBanned[ti].length >= 3) continue;
+        const p = pick(ti, 'card', redBanned[ti]);
+        const tName = ti === 0 ? t1 : t2;
+        const min = rng(4, 90);
 
-    const rosters = [r1, r2];
-    const yellows = [[], []];
-    const banned  = [[], []];
-    const events  = [];
-
-    // Kartlar
-    for (let i = 0; i < rng(2,7); i++) {
-        const ti = rng(0,1);
-        if (banned[ti].length >= 3) continue;
-        const p = pick(rosters[ti], 'card', banned[ti]);
-        const tn = ti===0 ? t1 : t2;
-        const min = rng(4,90);
         if (yellows[ti].includes(p.name)) {
-            events.push({min, html: evHTML(min,
-                `<span class="ev-red">🟥 Kırmızı Kart (2. Sarı)</span> <strong>${p.name}</strong> — <em>${tn}</em>`,
-                cardDesc(p.name, tn, true, false))});
-            banned[ti].push(p.name);
+            // İkinci sarı → kırmızı
+            events.push({ min, html: buildEvent(min,
+                `<span class="ev-red">🟥 Kırmızı Kart (2. Sarı)</span> <strong>${p.name}</strong> — <em>${tName}</em>`,
+                buildCardDesc(p.name, tName, true, false)
+            )});
+            redBanned[ti].push(p.name);
         } else {
             yellows[ti].push(p.name);
-            events.push({min, html: evHTML(min,
-                `<span class="ev-yellow">🟨 Sarı Kart</span> <strong>${p.name}</strong> — <em>${tn}</em>`,
-                cardDesc(p.name, tn, false, false))});
-        }
-    }
-    if (rng(1,100) <= 10) {
-        const ti = rng(0,1);
-        if (banned[ti].length < 3) {
-            const p = pick(rosters[ti], 'card', banned[ti]);
-            const tn = ti===0 ? t1 : t2;
-            const min = rng(10,85);
-            events.push({min, html: evHTML(min,
-                `<span class="ev-red">🟥 Direkt Kırmızı!</span> <strong>${p.name}</strong> — <em>${tn}</em>`,
-                cardDesc(p.name, tn, false, true))});
-            banned[ti].push(p.name);
+            events.push({ min, html: buildEvent(min,
+                `<span class="ev-yellow">🟨 Sarı Kart</span> <strong>${p.name}</strong> — <em>${tName}</em>`,
+                buildCardDesc(p.name, tName, false, false)
+            )});
         }
     }
 
-    // Skor hesaplama
-    let win1 = 50;
-    if (adv==='t1') win1 += 20;
-    if (adv==='t2') win1 -= 20;
-    const td = tac1 - tac2;
-    const tb = Math.min(Math.max(Math.round(td/50), -30), 30);
-    win1 += tb + (banned[1].length - banned[0].length) * 22;
-    win1 = Math.min(95, Math.max(5, win1));
-
-    const score = [0,0];
-    for (let i=0;i<6;i++) if (rng(1,100) <= win1/1.5)        score[0]++;
-    for (let i=0;i<6;i++) if (rng(1,100) <= (100-win1)/1.5)  score[1]++;
-    if (banned[0].length>=2) score[0] = Math.min(score[0], rng(0,1));
-    if (banned[1].length>=2) score[1] = Math.min(score[1], rng(0,1));
-
-    // Goller
-    const allScorers = [];
-    for (let i=0;i<score[0];i++) {
-        const scorer = pick(r1,'scorer',banned[0]);
-        const assist = pickDiff(r1,'assist',scorer.name,banned[0]);
-        const min = rng(5,92);
-        allScorers.push(scorer.name);
-        events.push({min, html: evHTML(min,
-            `<span class="ev-goal">⚽ Gol!</span> <strong>${scorer.name}</strong> <span style="color:var(--muted);font-size:.79rem;">(Asist: ${assist.name})</span> — <em>${t1}</em>`,
-            goalDesc(scorer.name, assist.name))});
-    }
-    for (let i=0;i<score[1];i++) {
-        const scorer = pick(r2,'scorer',banned[1]);
-        const assist = pickDiff(r2,'assist',scorer.name,banned[1]);
-        const min = rng(5,92);
-        allScorers.push(scorer.name);
-        events.push({min, html: evHTML(min,
-            `<span class="ev-goal">⚽ Gol!</span> <strong>${scorer.name}</strong> <span style="color:var(--muted);font-size:.79rem;">(Asist: ${assist.name})</span> — <em>${t2}</em>`,
-            goalDesc(scorer.name, assist.name))});
+    // Direkt kırmızı (%10)
+    if (rng(1, 100) <= 10) {
+        const ti = rng(0, 1);
+        if (redBanned[ti].length < 3) {
+            const p = pick(ti, 'card', redBanned[ti]);
+            const tName = ti === 0 ? t1 : t2;
+            const min = rng(10, 85);
+            events.push({ min, html: buildEvent(min,
+                `<span class="ev-red">🟥 Direkt Kırmızı Kart!</span> <strong>${p.name}</strong> — <em>${tName}</em>`,
+                buildCardDesc(p.name, tName, false, true)
+            )});
+            redBanned[ti].push(p.name);
+        }
     }
 
-    events.sort((a,b) => a.min - b.min);
+    // ── 3. Kazanma olasılığı
+    let winT1 = 50;
+    if (squadAdv === 't1') winT1 += 20;
+    if (squadAdv === 't2') winT1 -= 20;
+    const tacDiff = state.tacticLen[0] - state.tacticLen[1];
+    const tacBonus = Math.min(Math.max(Math.round(tacDiff / 50), -30), 30);
+    winT1 += tacBonus;
+    winT1 += (redBanned[1].length - redBanned[0].length) * 22;
+    winT1 = Math.min(95, Math.max(5, winT1));
 
-    // Raporu doldur
+    // ── 4. Goller
+    let score = [0, 0];
+    for (let i = 0; i < 6; i++) if (rng(1, 100) <= winT1 / 1.5) score[0]++;
+    for (let i = 0; i < 6; i++) if (rng(1, 100) <= (100 - winT1) / 1.5) score[1]++;
+    if (redBanned[0].length >= 2) score[0] = Math.min(score[0], rng(0, 1));
+    if (redBanned[1].length >= 2) score[1] = Math.min(score[1], rng(0, 1));
+
+    let allScorers = [];
+    for (let i = 0; i < score[0]; i++) addGoalEvent(events, 0, t1, redBanned[0], allScorers);
+    for (let i = 0; i < score[1]; i++) addGoalEvent(events, 1, t2, redBanned[1], allScorers);
+
+    // ── 5. Sırala & Render
+    events.sort((a, b) => a.min - b.min);
+    const logHtml = events.length
+        ? events.map(e => `<div class="event-item">${e.html}</div>`).join('')
+        : `<div class="event-item"><div class="event-header"><span class="event-min">—</span> <span>Kayda değer bir olay yaşanmadı.</span></div></div>`;
+
+    // Skor
     document.getElementById('sc-t1').textContent = t1;
     document.getElementById('sc-t2').textContent = t2;
     document.getElementById('sc-score').textContent = `${score[0]} - ${score[1]}`;
+    document.getElementById('eventLog').innerHTML = logHtml;
 
-    document.getElementById('eventLog').innerHTML = events.length
-        ? events.map(e=>`<div class="event-item">${e.html}</div>`).join('')
-        : `<div class="event-item"><div class="event-header"><span class="event-min">—</span> Kayda değer bir olay yaşanmadı.</div></div>`;
-
-    // Analiz metni
-    let h = '';
-    const ks = adv==='t1'
-        ? `<span class="hl">${t1}</span> kağıt üstünde kadro kalitesiyle daha güçlüydü.`
-        : adv==='t2'
-        ? `<span class="hl">${t2}</span> kağıt üstünde daha ağır basan kadroya sahipti.`
-        : 'İki takımın kadro kalitesi birbirine dengeydi.';
-    h += `<p><strong>Kadro Durumu:</strong> ${ks}</p>`;
-
-    let ts = (tac1||tac2)
-        ? `${t1} menajeri ${tac1} karakterlik bir oyun planı oluştururken, ${t2} cephesinde ${tac2} karakterlik bir strateji hazırlandı. `
-        : 'Taktik notu girilmedi. ';
-    if (Math.abs(tb)<5) ts += 'Taktik detayı açısından iki taraf da birbirine denk görünüyordu.';
-    else if (tb>0) ts += `<span class="hl">${t1}</span> daha kapsamlı taktik çalışmasıyla rakibini baskı altına aldı.`;
-    else ts += `<span class="hl">${t2}</span>'nin daha detaylı hazırlığı sahada karşılığını buldu.`;
-    h += `<p><strong>Taktiksel Çarpışma:</strong> ${ts}</p>`;
-
-    if (banned[0].length>0) h += `<p><strong>Disiplin:</strong> <span class="danger">${t1}</span> kırmızı kart(lar) nedeniyle sayısal eksikliğe düştü.</p>`;
-    if (banned[1].length>0) h += `<p><strong>Disiplin:</strong> <span class="danger">${t2}</span> cephesindeki kırmızı kart şoku dengeyi tamamen değiştirdi.</p>`;
-
-    const w = score[0]>score[1] ? t1 : score[1]>score[0] ? t2 : null;
-    h += `<p><strong>Sonuç:</strong> ${w
-        ? `Maç sonunda <span class="hl">${w}</span> sahadan galip ayrıldı.`
-        : 'Maç beraberlikle noktalandı, iki taraf birer puan paylaştı.'}</p>`;
-    document.getElementById('aiBox').innerHTML = h;
+    // AI Analiz
+    document.getElementById('aiBox').innerHTML = buildAnalysis(t1, t2, squadAdv, tacBonus, winT1, redBanned, score);
 
     // İstatistikler
-    const pos1 = Math.min(80, Math.max(20, win1 + rng(-8,8)));
-    const sh1 = score[0] + rng(4,11) + (win1>50?2:0);
-    const sh2 = score[1] + rng(4,11) + (win1<=50?2:0);
-    document.getElementById('statsBox').innerHTML =
-        `<div class="stat-names"><span>${t1}</span><span>${t2}</span></div>` +
-        `<div class="stat-row"><span class="stat-val">%${pos1}</span><span class="stat-label">Topla Oynama</span><span class="stat-val">%${100-pos1}</span></div>` +
-        `<div class="stat-row"><span class="stat-val">${sh1}</span><span class="stat-label">Toplam Şut</span><span class="stat-val">${sh2}</span></div>` +
-        `<div class="stat-row"><span class="stat-val">${score[0]+rng(1,4)}</span><span class="stat-label">İsabetli Şut</span><span class="stat-val">${score[1]+rng(1,4)}</span></div>` +
-        `<div class="stat-row"><span class="stat-val">${rng(220,480)}</span><span class="stat-label">İsabetli Pas</span><span class="stat-val">${rng(220,480)}</span></div>` +
-        `<div class="stat-row"><span class="stat-val">${yellows[0].length} Sarı / ${banned[0].length} Kırmızı</span><span class="stat-label">Kartlar</span><span class="stat-val">${yellows[1].length} Sarı / ${banned[1].length} Kırmızı</span></div>`;
+    const pos1 = Math.min(80, Math.max(20, winT1 + rng(-8,8)));
+    const shots1 = score[0] + rng(4, 11) + (winT1 > 50 ? 2 : 0);
+    const shots2 = score[1] + rng(4, 11) + (winT1 <= 50 ? 2 : 0);
+    document.getElementById('statsBox').innerHTML = `
+        <div class="stat-names"><span>${t1}</span><span>${t2}</span></div>
+        <div class="stat-row"><span class="stat-val">%${pos1}</span><span class="stat-label">Topla Oynama</span><span class="stat-val">%${100-pos1}</span></div>
+        <div class="stat-row"><span class="stat-val">${shots1}</span><span class="stat-label">Toplam Şut</span><span class="stat-val">${shots2}</span></div>
+        <div class="stat-row"><span class="stat-val">${score[0]+rng(1,4)}</span><span class="stat-label">İsabetli Şut</span><span class="stat-val">${score[1]+rng(1,4)}</span></div>
+        <div class="stat-row"><span class="stat-val">${rng(250,480)}</span><span class="stat-label">İsabetli Pas</span><span class="stat-val">${rng(250,480)}</span></div>
+        <div class="stat-row"><span class="stat-val">${yellows[0].length} Sarı / ${redBanned[0].length} Kırmızı</span><span class="stat-label">Kartlar</span><span class="stat-val">${yellows[1].length} Sarı / ${redBanned[1].length} Kırmızı</span></div>
+    `;
 
-    const motm = allScorers.length
-        ? allScorers[rng(0,allScorers.length-1)]
-        : pick(rosters[rng(0,1)], 'scorer', []).name;
+    // MOTM
+    const motm = allScorers.length > 0
+        ? allScorers[rng(0, allScorers.length - 1)]
+        : pick(rng(0,1), 'scorer', []).name;
     document.getElementById('motmBox').textContent = `💫 Maçın Adamı: ${motm}  (${(rng(80,98)/10).toFixed(1)})`;
 
     document.getElementById('matchReport').classList.add('active');
-    document.getElementById('matchReport').scrollIntoView({behavior:'smooth',block:'start'});
+    document.getElementById('matchReport').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function buildEvent(min, titleHtml, desc) {
+    return `<div class="event-header"><span class="event-min">${min}'</span> ${titleHtml}</div><div class="event-desc">${desc}</div>`;
+}
+
+function addGoalEvent(events, teamIdx, teamName, banned, scorersArr) {
+    const scorer = pick(teamIdx, 'scorer', banned);
+    const assist = pickDifferent(teamIdx, 'assist', scorer.name, banned);
+    const min = rng(5, 92);
+    const desc = buildGoalDesc(scorer.name, assist.name, scorer.normPos, assist.normPos);
+    scorersArr.push(scorer.name);
+    events.push({ min, html: buildEvent(min,
+        `<span class="ev-goal">⚽ Gol!</span> <strong>${scorer.name}</strong> <span style="color:var(--muted);font-size:0.8rem;">(Asist: ${assist.name})</span> — <em>${teamName}</em>`,
+        desc
+    )});
+}
+
+function buildAnalysis(t1, t2, squadAdv, tacBonus, winT1, redBanned, score) {
+    let html = '';
+
+    // Kadro
+    const kadroStr = squadAdv === 't1'
+        ? `<span class="highlight">${t1}</span> kağıt üstünde kadro kalitesi olarak daha güçlüydü.`
+        : squadAdv === 't2'
+        ? `<span class="highlight">${t2}</span> kağıt üstünde daha ağır basan kadroya sahipti.`
+        : `İki takımın kadro kalitesi birbirine dengeydi.`;
+    html += `<p><strong>Kadro Durumu:</strong> ${kadroStr}</p><br>`;
+
+    // Taktik
+    const tl1 = state.tacticLen[0], tl2 = state.tacticLen[1];
+    let tacStr = `${t1} menajeri ${tl1} karakterlik bir oyun planı oluştururken, ${t2} cephesinde ${tl2} karakterlik bir strateji okundu. `;
+    if (Math.abs(tacBonus) < 5) {
+        tacStr += 'Taktik detayı açısından iki taraf da birbirine denk görünüyordu.';
+    } else if (tacBonus > 0) {
+        tacStr += `<span class="highlight">${t1}</span> daha kapsamlı taktik çalışmasıyla rakibini baskı altına almayı başardı.`;
+    } else {
+        tacStr += `<span class="highlight">${t2}</span>'nin daha detaylı hazırlığı sahada karşılığını buldu.`;
+    }
+    html += `<p><strong>Taktiksel Çarpışma:</strong> ${tacStr}</p><br>`;
+
+    // Kırmızı kart etkisi
+    if (redBanned[0].length > 0) {
+        html += `<p><strong>Disiplin:</strong> <span class="danger">${t1}</span> gördüğü kırmızı kart(lar) nedeniyle sayısal eksikliğe düştü; bu durum oyun planını doğrudan sarstı.</p><br>`;
+    }
+    if (redBanned[1].length > 0) {
+        html += `<p><strong>Disiplin:</strong> <span class="danger">${t2}</span> cephesindeki kırmızı kart şoku, denge denklemi tamamen lehte değiştirdi.</p><br>`;
+    }
+
+    // Özet
+    const winner = score[0] > score[1] ? t1 : score[1] > score[0] ? t2 : null;
+    const resultStr = winner
+        ? `Maç sonunda <span class="highlight">${winner}</span> sahadan galip ayrıldı.`
+        : `Maç beraberlikle noktalandı, iki taraf da bir puan paylaştı.`;
+    html += `<p><strong>Sonuç:</strong> ${resultStr}</p>`;
+
+    return html;
 }
 </script>
 </body>
